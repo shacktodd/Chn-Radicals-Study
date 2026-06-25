@@ -1,0 +1,1106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>偏旁 · The Radical Lab — Chinese Radicals Study</title>
+<meta name="description" content="Learn the 214 Kangxi radicals through flashcards, quizzes, and a sound-family decoder. Meaning hints, sound hints, and how characters are built." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=Noto+Sans+SC:wght@400;500;700&family=Noto+Serif+SC:wght@400;600;700;900&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --ink:#17120c;
+    --ink-soft:#2a2118;
+    --paper:#efe7d6;
+    --paper-2:#e6dcc6;
+    --paper-card:#f6f0e2;
+    --seal:#bb392c;
+    --seal-deep:#8f2a20;
+    --celadon:#5c8a7c;
+    --celadon-deep:#3f6256;
+    --ochre:#bd8b30;
+    --muted:#6c6051;
+    --line:#cdbfa3;
+    --line-soft:#dccfb3;
+    /* tone colors */
+    --t1:#2f6f8f; --t2:#4a8c5e; --t3:#b5872e; --t4:#bb392c; --t0:#8a8178;
+    --shadow:0 18px 40px -22px rgba(23,18,12,.55);
+    --r:14px;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+  body{
+    margin:0;background:var(--paper);color:var(--ink);
+    font-family:"Inter",system-ui,sans-serif;
+    -webkit-font-smoothing:antialiased;line-height:1.55;
+  }
+  .hanzi{font-family:"Noto Serif SC","Noto Sans SC",serif;font-weight:600}
+  .han-ui{font-family:"Noto Sans SC",sans-serif}
+  .mono{font-family:"JetBrains Mono",monospace}
+  h1,h2,h3{font-family:"Newsreader",Georgia,serif;font-weight:600;line-height:1.08;margin:0}
+  a{color:inherit}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 22px}
+  .eyebrow{
+    font-family:"JetBrains Mono",monospace;font-size:.72rem;letter-spacing:.22em;
+    text-transform:uppercase;color:var(--seal);font-weight:500;
+  }
+  .pinyin{font-family:"JetBrains Mono",monospace;font-weight:500;letter-spacing:.01em}
+  .t1{color:var(--t1)} .t2{color:var(--t2)} .t3{color:var(--t3)} .t4{color:var(--t4)} .t0{color:var(--t0)}
+
+  /* ---------- NAV ---------- */
+  header.nav{
+    position:sticky;top:0;z-index:50;background:rgba(239,231,214,.82);
+    backdrop-filter:blur(10px);border-bottom:1px solid var(--line);
+  }
+  .nav .wrap{display:flex;align-items:center;gap:18px;height:62px}
+  .brand{display:flex;align-items:center;gap:11px;font-weight:600;text-decoration:none}
+  .seal-mark{
+    width:34px;height:34px;border:1.5px solid var(--seal);border-radius:7px;
+    display:grid;place-items:center;color:var(--seal);background:rgba(187,57,44,.06);
+    font-family:"Noto Serif SC",serif;font-weight:700;font-size:1.05rem;flex:none;
+  }
+  .brand b{font-family:"Newsreader",serif;font-weight:600;font-size:1.08rem}
+  .nav nav{margin-left:auto;display:flex;gap:4px}
+  .nav nav a{
+    text-decoration:none;font-size:.86rem;font-weight:500;color:var(--muted);
+    padding:8px 13px;border-radius:9px;transition:.15s;
+  }
+  .nav nav a:hover{color:var(--ink);background:rgba(23,18,12,.05)}
+  .nav nav a.active{color:var(--seal)}
+
+  /* ---------- HERO ---------- */
+  .hero{
+    background:
+      radial-gradient(120% 90% at 88% -10%, rgba(92,138,124,.22), transparent 60%),
+      var(--ink);
+    color:var(--paper);position:relative;overflow:hidden;
+    border-bottom:1px solid var(--ink);
+  }
+  .hero .wrap{padding:64px 22px 70px;position:relative;z-index:2}
+  .hero-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:40px;align-items:center}
+  .hero h1{font-size:clamp(2.5rem,6vw,4.4rem);letter-spacing:-.015em;color:var(--paper)}
+  .hero h1 .em{color:var(--celadon);font-style:italic}
+  .hero p.lede{color:#d8cdb6;font-size:1.06rem;max-width:42ch;margin:18px 0 0}
+  .hero .han-row{display:flex;gap:10px;flex-wrap:wrap;margin:30px 0 0}
+  .hero .han-row .g{
+    border:1px solid rgba(216,205,182,.22);border-radius:10px;padding:9px 12px;
+    text-align:center;min-width:62px;background:rgba(255,255,255,.02);
+  }
+  .hero .han-row .g .c{font-family:"Noto Serif SC",serif;font-size:1.7rem;color:var(--paper)}
+  .hero .han-row .g .p{font-size:.66rem;color:#c2b79f;margin-top:2px}
+  .hero .han-row .g .m{font-size:.6rem;color:#9a8f78;letter-spacing:.04em}
+
+  /* big practice-grid character, the signature element */
+  .tianzige{
+    position:relative;aspect-ratio:1;border:2px solid rgba(216,205,182,.4);border-radius:8px;
+    background:
+      linear-gradient(rgba(216,205,182,.28),rgba(216,205,182,.28)) 50% 0/1px 100% no-repeat,
+      linear-gradient(rgba(216,205,182,.28),rgba(216,205,182,.28)) 0 50%/100% 1px no-repeat;
+    display:grid;place-items:center;
+  }
+  .tianzige::before,.tianzige::after{
+    content:"";position:absolute;inset:0;border:1px dashed rgba(216,205,182,.2);border-radius:4px;
+    margin:8px;pointer-events:none;
+  }
+  .tianzige .bighan{
+    font-family:"Noto Serif SC",serif;font-weight:700;color:var(--paper);
+    font-size:clamp(7rem,22vw,12rem);line-height:1;position:relative;
+  }
+  .tianzige .stamp{
+    position:absolute;right:10px;bottom:10px;width:46px;height:46px;border:2px solid var(--seal);
+    border-radius:6px;color:var(--seal);display:grid;place-items:center;
+    font-family:"Noto Serif SC",serif;font-weight:700;font-size:1.5rem;
+    background:rgba(187,57,44,.1);transform:rotate(-4deg);
+  }
+  .hero-cta{display:flex;gap:12px;margin-top:30px;flex-wrap:wrap}
+  .btn{
+    border:0;cursor:pointer;font-family:"Inter",sans-serif;font-weight:600;font-size:.92rem;
+    padding:12px 20px;border-radius:11px;text-decoration:none;display:inline-flex;align-items:center;gap:8px;
+    transition:.15s;
+  }
+  .btn.primary{background:var(--seal);color:#fbf6ec}
+  .btn.primary:hover{background:var(--seal-deep)}
+  .btn.ghost{background:transparent;color:var(--paper);border:1px solid rgba(216,205,182,.35)}
+  .btn.ghost:hover{background:rgba(255,255,255,.06)}
+
+  /* method strip */
+  .method{background:var(--ink-soft);color:#ccc0a8;border-top:1px solid rgba(216,205,182,.12)}
+  .method .wrap{display:flex;gap:8px;flex-wrap:wrap;padding:14px 22px;align-items:center;justify-content:center}
+  .method .step{display:flex;align-items:center;gap:8px;font-size:.8rem}
+  .method .n{font-family:"JetBrains Mono",monospace;color:var(--celadon);font-weight:700}
+  .method .arrow{color:#6f6553}
+
+  /* ---------- SECTIONS ---------- */
+  section.block{padding:62px 0}
+  .sec-head{margin-bottom:30px;max-width:60ch}
+  .sec-head h2{font-size:clamp(1.8rem,4vw,2.6rem);letter-spacing:-.01em;margin-top:8px}
+  .sec-head p{color:var(--muted);margin:12px 0 0;font-size:1.02rem}
+
+  /* deck picker */
+  .decks{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:24px}
+  .deck-btn{
+    border:1px solid var(--line);background:var(--paper-card);cursor:pointer;
+    padding:9px 15px;border-radius:999px;font-size:.85rem;font-weight:500;color:var(--ink);transition:.15s;
+    display:flex;align-items:center;gap:8px;
+  }
+  .deck-btn:hover{border-color:var(--celadon)}
+  .deck-btn.active{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+  .deck-btn .cnt{font-family:"JetBrains Mono",monospace;font-size:.72rem;opacity:.7}
+
+  /* flashcard */
+  .card-stage{display:grid;grid-template-columns:1fr;gap:18px;max-width:520px;margin:0 auto}
+  .progress{display:flex;align-items:center;justify-content:space-between;font-size:.82rem;color:var(--muted)}
+  .progress .mono{font-size:.82rem}
+  .bar{height:5px;background:var(--paper-2);border-radius:99px;overflow:hidden;flex:1;margin:0 14px}
+  .bar i{display:block;height:100%;background:var(--celadon);width:0;transition:width .3s}
+
+  .flip{perspective:1600px;cursor:pointer;outline:none}
+  .flip-inner{
+    position:relative;width:100%;aspect-ratio:1/1.12;transition:transform .55s cubic-bezier(.4,.05,.2,1);
+    transform-style:preserve-3d;
+  }
+  .flip.is-flipped .flip-inner{transform:rotateY(180deg)}
+  .face{
+    position:absolute;inset:0;backface-visibility:hidden;border-radius:18px;
+    background:var(--paper-card);border:1px solid var(--line);box-shadow:var(--shadow);
+    display:flex;flex-direction:column;
+  }
+  .face.back{transform:rotateY(180deg)}
+  .face-top{display:flex;justify-content:space-between;align-items:center;padding:14px 18px 0;font-size:.72rem}
+  .face-top .idx{font-family:"JetBrains Mono",monospace;color:var(--muted)}
+  .face-top .tag{font-family:"JetBrains Mono",monospace;color:var(--seal);letter-spacing:.12em;text-transform:uppercase}
+  /* front grid */
+  .front-grid{flex:1;margin:6px 22px 22px;position:relative;
+    border:1.5px solid var(--line);border-radius:10px;display:grid;place-items:center;
+    background:
+      linear-gradient(var(--line-soft),var(--line-soft)) 50% 0/1px 100% no-repeat,
+      linear-gradient(var(--line-soft),var(--line-soft)) 0 50%/100% 1px no-repeat;
+  }
+  .front-grid .gline{position:absolute;inset:14px;border:1px dashed var(--line-soft);border-radius:6px}
+  .front-grid .radchar{font-family:"Noto Serif SC",serif;font-weight:700;font-size:clamp(5rem,18vw,8rem);line-height:1;z-index:1}
+  .front-hint{position:absolute;bottom:12px;left:0;right:0;text-align:center;font-size:.74rem;color:var(--muted);z-index:1}
+  /* back content */
+  .back-body{flex:1;display:flex;flex-direction:column;justify-content:center;padding:10px 26px 22px;gap:4px}
+  .back-body .bp{font-family:"JetBrains Mono",monospace;font-size:1.5rem;font-weight:700}
+  .back-body .bmean{font-family:"Newsreader",serif;font-size:1.7rem;font-weight:600;margin-top:2px}
+  .back-body .brule{height:1px;background:var(--line);margin:14px 0}
+  .back-body .lbl{font-family:"JetBrains Mono",monospace;font-size:.64rem;letter-spacing:.14em;text-transform:uppercase;color:var(--seal);margin-bottom:3px}
+  .back-body .bex{font-size:1.02rem}
+  .back-body .bex .exc{font-family:"Noto Serif SC",serif;font-size:1.5rem;font-weight:600;vertical-align:-3px;margin-right:6px}
+  .back-body .bhook{color:var(--muted);font-size:.92rem;margin-top:12px;font-style:italic;font-family:"Newsreader",serif}
+
+  .card-controls{display:flex;gap:10px;align-items:center;justify-content:center;flex-wrap:wrap}
+  .icon-btn{
+    border:1px solid var(--line);background:var(--paper-card);cursor:pointer;border-radius:11px;
+    width:46px;height:46px;display:grid;place-items:center;color:var(--ink);transition:.15s;font-size:1.1rem;
+  }
+  .icon-btn:hover{border-color:var(--celadon);color:var(--celadon-deep)}
+  .icon-btn:disabled{opacity:.35;cursor:default}
+  .icon-btn.wide{width:auto;padding:0 16px;font-size:.86rem;font-weight:600;font-family:"Inter",sans-serif;gap:7px}
+  .known-pill{font-size:.78rem;color:var(--muted);font-family:"JetBrains Mono",monospace}
+  .tone-key{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;margin-top:18px;font-size:.74rem;color:var(--muted)}
+  .tone-key span b{font-family:"JetBrains Mono",monospace}
+
+  /* reference grid */
+  .ref-search{display:flex;gap:10px;margin-bottom:18px;flex-wrap:wrap}
+  .ref-search input{
+    flex:1;min-width:200px;border:1px solid var(--line);background:var(--paper-card);border-radius:10px;
+    padding:11px 14px;font-family:"Inter",sans-serif;font-size:.92rem;color:var(--ink);
+  }
+  .ref-search input:focus{outline:2px solid var(--celadon);outline-offset:1px}
+  .ref-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(118px,1fr));gap:10px}
+  .ref-cell{
+    border:1px solid var(--line);background:var(--paper-card);border-radius:11px;padding:12px;
+    display:flex;flex-direction:column;gap:2px;transition:.12s;
+  }
+  .ref-cell:hover{border-color:var(--celadon);transform:translateY(-2px)}
+  .ref-cell .num{font-family:"JetBrains Mono",monospace;font-size:.62rem;color:var(--muted)}
+  .ref-cell .rc{font-family:"Noto Serif SC",serif;font-size:1.9rem;font-weight:600;line-height:1.1}
+  .ref-cell .rp{font-family:"JetBrains Mono",monospace;font-size:.78rem}
+  .ref-cell .rm{font-size:.74rem;color:var(--muted)}
+  .ref-count{font-size:.8rem;color:var(--muted);margin-top:14px;font-family:"JetBrains Mono",monospace}
+
+  /* ---------- QUIZ ---------- */
+  #quiz{background:var(--paper-2);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+  .quiz-box{max-width:600px;margin:0 auto}
+  .quiz-meta{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;font-size:.84rem;color:var(--muted)}
+  .quiz-meta .score b{color:var(--seal);font-family:"JetBrains Mono",monospace}
+  .qcard{background:var(--paper-card);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);padding:26px}
+  .qprompt{font-size:1.15rem;font-weight:500;margin-bottom:6px}
+  .qprompt .big{font-family:"Noto Serif SC",serif;font-size:2.4rem;font-weight:700;display:inline-block;vertical-align:-8px;margin-right:6px}
+  .qsub{font-size:.84rem;color:var(--muted);margin-bottom:20px;font-family:"JetBrains Mono",monospace}
+  .opts{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  @media(max-width:480px){.opts{grid-template-columns:1fr}}
+  .opt{
+    border:1px solid var(--line);background:var(--paper);border-radius:12px;padding:14px 16px;cursor:pointer;
+    text-align:left;font-size:1rem;transition:.12s;display:flex;align-items:center;gap:10px;color:var(--ink);
+    font-family:"Inter",sans-serif;
+  }
+  .opt .oc{font-family:"Noto Serif SC",serif;font-size:1.6rem;font-weight:600;line-height:1}
+  .opt:hover:not(:disabled){border-color:var(--celadon);background:var(--paper-card)}
+  .opt.correct{border-color:var(--celadon);background:rgba(92,138,124,.14);color:var(--celadon-deep)}
+  .opt.wrong{border-color:var(--seal);background:rgba(187,57,44,.1);color:var(--seal-deep)}
+  .opt:disabled{cursor:default}
+  .qfoot{margin-top:18px;display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:44px}
+  .qfeedback{font-size:.9rem;font-weight:500}
+  .qfeedback.good{color:var(--celadon-deep)}
+  .qfeedback.bad{color:var(--seal-deep)}
+  .qresult{text-align:center;padding:20px 0}
+  .qresult .big-score{font-family:"Newsreader",serif;font-size:3.4rem;font-weight:600}
+  .qresult .rmsg{color:var(--muted);margin:6px 0 22px}
+
+  /* ---------- STUDY LAB ---------- */
+  .lab-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px}
+  .lab-tab{border:1px solid var(--line);background:transparent;border-radius:10px;padding:9px 15px;cursor:pointer;
+    font-weight:600;font-size:.9rem;color:var(--muted);transition:.15s}
+  .lab-tab.active{background:var(--celadon-deep);color:#f3efe3;border-color:var(--celadon-deep)}
+  .lab-panel{margin-top:24px}
+  .lab-panel[hidden]{display:none}
+
+  /* sound family decoder */
+  .fam-pick{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:24px}
+  .fam-chip{
+    border:1px solid var(--line);background:var(--paper-card);border-radius:12px;cursor:pointer;
+    padding:8px 14px;display:flex;align-items:center;gap:9px;transition:.15s;
+  }
+  .fam-chip .fc{font-family:"Noto Serif SC",serif;font-size:1.5rem;font-weight:700}
+  .fam-chip .fp{font-family:"JetBrains Mono",monospace;font-size:.8rem;color:var(--muted)}
+  .fam-chip.active{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+  .fam-chip.active .fp{color:#c2b79f}
+
+  .decoder{display:grid;grid-template-columns:.9fr 1.1fr;gap:26px;align-items:start}
+  @media(max-width:760px){.decoder{grid-template-columns:1fr}}
+  .builder{
+    background:var(--ink);color:var(--paper);border-radius:18px;padding:30px 24px;box-shadow:var(--shadow);
+    display:flex;flex-direction:column;align-items:center;gap:6px;min-height:300px;justify-content:center;
+  }
+  .build-eq{display:flex;align-items:center;gap:14px;justify-content:center;margin-bottom:6px}
+  .build-eq .piece{display:flex;flex-direction:column;align-items:center;gap:6px}
+  .build-eq .pc{
+    font-family:"Noto Serif SC",serif;font-size:3.2rem;font-weight:700;line-height:1;
+    width:84px;height:84px;border:1.5px solid rgba(216,205,182,.3);border-radius:12px;display:grid;place-items:center;
+    transition:.3s;
+  }
+  .build-eq .pc.radical{color:var(--celadon)}
+  .build-eq .pc.phon{color:var(--ochre)}
+  .build-eq .pc.result{background:rgba(187,57,44,.14);border-color:var(--seal);color:var(--paper);width:96px;height:96px;font-size:3.7rem}
+  .build-eq .op{font-family:"Newsreader",serif;font-size:1.8rem;color:#8a8071}
+  .build-eq .lbl{font-size:.6rem;font-family:"JetBrains Mono",monospace;letter-spacing:.12em;text-transform:uppercase;color:#9a8f78}
+  .build-read{text-align:center;margin-top:14px}
+  .build-read .bigp{font-family:"JetBrains Mono",monospace;font-size:1.5rem;font-weight:700}
+  .build-read .bigm{font-family:"Newsreader",serif;font-size:1.4rem;color:var(--paper)}
+  .build-why{font-size:.84rem;color:#bcb19a;margin-top:10px;max-width:34ch;text-align:center;font-style:italic;font-family:"Newsreader",serif}
+  .build-empty{color:#9a8f78;font-size:.95rem;text-align:center;max-width:30ch}
+
+  .members{display:flex;flex-direction:column;gap:9px}
+  .member{
+    border:1px solid var(--line);background:var(--paper-card);border-radius:12px;padding:13px 16px;cursor:pointer;
+    display:flex;align-items:center;gap:14px;transition:.13s;text-align:left;width:100%;color:var(--ink);font-family:"Inter",sans-serif;
+  }
+  .member:hover{border-color:var(--celadon);transform:translateX(3px)}
+  .member.active{border-color:var(--seal);background:rgba(187,57,44,.06)}
+  .member .mc{font-family:"Noto Serif SC",serif;font-size:2rem;font-weight:700;line-height:1;flex:none}
+  .member .mtext{flex:1}
+  .member .mtext .mp{font-family:"JetBrains Mono",monospace;font-weight:700;font-size:.95rem}
+  .member .mtext .mm{font-size:.84rem;color:var(--muted)}
+  .member .mrad{font-family:"Noto Sans SC",sans-serif;font-size:.78rem;color:var(--celadon-deep);background:rgba(92,138,124,.12);
+    padding:3px 8px;border-radius:7px;white-space:nowrap}
+  .fam-note{margin-top:22px;font-size:.9rem;color:var(--muted);background:var(--paper-card);border-left:3px solid var(--celadon);
+    padding:12px 16px;border-radius:0 10px 10px 0}
+
+  /* story spark */
+  .spark{display:grid;grid-template-columns:.85fr 1.15fr;gap:26px;align-items:start}
+  @media(max-width:760px){.spark{grid-template-columns:1fr}}
+  .spark-controls{display:flex;flex-direction:column;gap:14px}
+  .spark-controls label{font-family:"JetBrains Mono",monospace;font-size:.66rem;letter-spacing:.14em;text-transform:uppercase;color:var(--seal)}
+  .spark-controls select{
+    border:1px solid var(--line);background:var(--paper-card);border-radius:10px;padding:11px 13px;
+    font-family:"Inter",sans-serif;font-size:.95rem;color:var(--ink);width:100%;
+  }
+  .spark-card{
+    background:var(--paper-card);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);
+    padding:28px;min-height:240px;display:flex;flex-direction:column;
+  }
+  .spark-head{display:flex;align-items:center;gap:16px;margin-bottom:18px}
+  .spark-head .shc{font-family:"Noto Serif SC",serif;font-size:3rem;font-weight:700;line-height:1;color:var(--seal)}
+  .spark-head .shm{font-family:"Newsreader",serif;font-size:1.5rem}
+  .spark-head .shp{font-family:"JetBrains Mono",monospace;font-size:.85rem;color:var(--muted)}
+  .spark-text{font-family:"Newsreader",serif;font-size:1.3rem;line-height:1.5;flex:1}
+  .spark-text .hl{color:var(--celadon-deep);font-weight:600}
+  .spark-foot{margin-top:20px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+  .spark-tip{font-size:.82rem;color:var(--muted);font-style:italic;margin-top:18px;font-family:"Newsreader",serif}
+
+  /* ---------- FOOTER ---------- */
+  footer{background:var(--ink);color:#c2b79f;padding:50px 0 40px}
+  footer .wrap{display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:30px}
+  @media(max-width:680px){footer .wrap{grid-template-columns:1fr}}
+  footer h4{font-family:"JetBrains Mono",monospace;font-size:.7rem;letter-spacing:.16em;text-transform:uppercase;color:var(--celadon);margin:0 0 12px}
+  footer a{color:#d8cdb6;text-decoration:none;font-size:.9rem;display:block;padding:3px 0;transition:.12s}
+  footer a:hover{color:var(--paper)}
+  footer .ft-brand .big{font-family:"Noto Serif SC",serif;font-size:2rem;color:var(--paper)}
+  footer .fineprint{grid-column:1/-1;border-top:1px solid rgba(216,205,182,.14);margin-top:18px;padding-top:18px;
+    font-size:.78rem;color:#8a8071;display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap}
+
+  .reveal{opacity:0;transform:translateY(14px);transition:opacity .6s,transform .6s}
+  .reveal.in{opacity:1;transform:none}
+  @media (prefers-reduced-motion:reduce){
+    .reveal{opacity:1;transform:none;transition:none}
+    .flip-inner{transition:none}
+  }
+  @media(max-width:820px){
+    .hero-grid{grid-template-columns:1fr;gap:30px}
+    .hero .tianzige{max-width:300px;margin:0 auto}
+    .nav nav{display:none}
+  }
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="wrap">
+    <a class="brand" href="#top">
+      <span class="seal-mark">偏</span>
+      <b>The Radical Lab</b>
+    </a>
+    <nav id="navlinks">
+      <a href="#flashcards">Flashcards</a>
+      <a href="#reference">All 214</a>
+      <a href="#quiz">Quiz</a>
+      <a href="#lab">Study Lab</a>
+    </nav>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="hero" id="top">
+  <div class="wrap">
+    <div class="hero-grid">
+      <div>
+        <span class="eyebrow">214 Kangxi radicals · meaning + sound</span>
+        <h1>Every character is built from <span class="em">parts</span> you can read.</h1>
+        <p class="lede">A radical is a meaning hint. A phonetic component is a sound hint. Learn the pieces, and new characters stop being random — they become decodable. Drill them here with flashcards, a quiz, and a sound-family decoder.</p>
+        <div class="hero-cta">
+          <a class="btn primary" href="#flashcards">Start with flashcards</a>
+          <a class="btn ghost" href="#lab">Crack a sound family</a>
+        </div>
+        <div class="han-row">
+          <div class="g"><div class="c">水</div><div class="p pinyin t3">shuǐ</div><div class="m">water</div></div>
+          <div class="g"><div class="c">火</div><div class="p pinyin t3">huǒ</div><div class="m">fire</div></div>
+          <div class="g"><div class="c">木</div><div class="p pinyin t4">mù</div><div class="m">tree</div></div>
+          <div class="g"><div class="c">山</div><div class="p pinyin t1">shān</div><div class="m">mountain</div></div>
+          <div class="g"><div class="c">人</div><div class="p pinyin t2">rén</div><div class="m">person</div></div>
+        </div>
+      </div>
+      <div class="tianzige" aria-hidden="true">
+        <span class="bighan">青</span>
+        <span class="stamp">學</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- METHOD STRIP -->
+<div class="method">
+  <div class="wrap">
+    <div class="step"><span class="n">1</span> Identify the radical</div>
+    <span class="arrow">→</span>
+    <div class="step"><span class="n">2</span> Guess the meaning</div>
+    <span class="arrow">→</span>
+    <div class="step"><span class="n">3</span> Guess the sound</div>
+    <span class="arrow">→</span>
+    <div class="step"><span class="n">4</span> Verify</div>
+    <span class="arrow">→</span>
+    <div class="step"><span class="n">5</span> Write it, say it aloud</div>
+  </div>
+</div>
+
+<!-- FLASHCARDS -->
+<section class="block reveal" id="flashcards">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">Tool 01 · Flashcards</span>
+      <h2>Flip, guess, verify.</h2>
+      <p>Pick a deck. See the radical on a 田字格 writing grid, guess its meaning and sound, then flip to check. Tap the card or press space; use the arrows to move.</p>
+    </div>
+
+    <div class="decks" id="deckPicker"></div>
+
+    <div class="card-stage">
+      <div class="progress">
+        <span class="mono" id="cardIdx">1 / 30</span>
+        <span class="bar"><i id="cardBar"></i></span>
+        <span class="known-pill" id="knownCount">✓ 0 known</span>
+      </div>
+
+      <div class="flip" id="flip" tabindex="0" role="button" aria-label="Flashcard — activate to flip">
+        <div class="flip-inner">
+          <div class="face front">
+            <div class="face-top"><span class="idx" id="fIdx">#9</span><span class="tag" id="fTag">radical</span></div>
+            <div class="front-grid">
+              <span class="gline"></span>
+              <span class="radchar hanzi" id="fChar">人</span>
+              <span class="front-hint">tap to reveal · guess first</span>
+            </div>
+          </div>
+          <div class="face back">
+            <div class="face-top"><span class="idx" id="bIdx">#9</span><span class="tag">answer</span></div>
+            <div class="back-body">
+              <div class="bp pinyin" id="bPinyin">rén</div>
+              <div class="bmean" id="bMean">person</div>
+              <div class="brule"></div>
+              <div class="lbl">appears in</div>
+              <div class="bex" id="bExample"><span class="exc hanzi">他</span> tā — he</div>
+              <div class="bhook" id="bHook"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card-controls">
+        <button class="icon-btn" id="prevBtn" aria-label="Previous card">‹</button>
+        <button class="icon-btn wide" id="flipBtn">↻ Flip</button>
+        <button class="icon-btn wide" id="knownBtn">✓ Known</button>
+        <button class="icon-btn" id="nextBtn" aria-label="Next card">›</button>
+        <button class="icon-btn" id="shuffleBtn" aria-label="Shuffle deck" title="Shuffle">⤮</button>
+      </div>
+
+      <div class="tone-key">
+        <span><b class="t1">tā</b> = tone 1 flat</span>
+        <span><b class="t2">té</b> = tone 2 rising</span>
+        <span><b class="t3">tǎ</b> = tone 3 dip</span>
+        <span><b class="t4">tà</b> = tone 4 fall</span>
+        <span><b class="t0">ta</b> = neutral</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- REFERENCE -->
+<section class="block reveal" id="reference" style="background:var(--paper-2);border-top:1px solid var(--line);border-bottom:1px solid var(--line)">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">Reference · The complete set</span>
+      <h2>All 214 Kangxi radicals.</h2>
+      <p>A lookup table, not a memorisation list — scan it, search it. Filter by pinyin, meaning, or the radical itself.</p>
+    </div>
+    <div class="ref-search">
+      <input type="search" id="refSearch" placeholder="Search 214 radicals — try “water”, “shuǐ”, “心”, or a number" autocomplete="off" />
+    </div>
+    <div class="ref-grid" id="refGrid"></div>
+    <div class="ref-count" id="refCount"></div>
+  </div>
+</section>
+
+<!-- QUIZ -->
+<section class="block reveal" id="quiz">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">Tool 02 · Mini quiz</span>
+      <h2>Check what stuck.</h2>
+      <p>Ten mixed questions — match radicals to meanings, spot the radical inside a character, and decode sound families. Guess before you look.</p>
+    </div>
+    <div class="quiz-box">
+      <div class="quiz-meta">
+        <span id="qProgress">Question 1 / 10</span>
+        <span class="score">Score <b id="qScore">0</b></span>
+      </div>
+      <div class="qcard" id="qcard"><!-- injected --></div>
+    </div>
+  </div>
+</section>
+
+<!-- STUDY LAB -->
+<section class="block reveal" id="lab">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">Tool 03 · Study Lab</span>
+      <h2>Get creative. Decode, don’t memorise.</h2>
+      <p>Two techniques the guides swear by. The <b>Sound Family Decoder</b> shows how one phonetic component spins off a whole family of characters — same sound, shifting meaning. The <b>Story Spark</b> hands you a vivid mnemonic to make a radical impossible to forget.</p>
+    </div>
+
+    <div class="lab-tabs">
+      <button class="lab-tab active" data-lab="decoder">Sound Family Decoder</button>
+      <button class="lab-tab" data-lab="spark">Mnemonic Story Spark</button>
+    </div>
+
+    <!-- DECODER -->
+    <div class="lab-panel" id="lab-decoder">
+      <div class="fam-pick" id="famPick"></div>
+      <div class="decoder">
+        <div class="builder" id="builder">
+          <div class="build-empty" id="buildEmpty">Pick a character on the right to watch it assemble from a meaning hint plus this sound hint.</div>
+        </div>
+        <div>
+          <div class="members" id="members"></div>
+          <div class="fam-note" id="famNote"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SPARK -->
+    <div class="lab-panel" id="lab-spark" hidden>
+      <div class="spark">
+        <div class="spark-controls">
+          <div>
+            <label for="sparkSelect">Choose a radical</label>
+            <select id="sparkSelect"></select>
+          </div>
+          <button class="btn primary" id="sparkBtn">✦ Spark a new story</button>
+          <p class="spark-tip">Make it stranger than this. Vivid and absurd sticks; tidy and sensible slides off. Say your version out loud once.</p>
+        </div>
+        <div class="spark-card">
+          <div class="spark-head">
+            <span class="shc hanzi" id="sparkChar">心</span>
+            <div>
+              <div class="shm" id="sparkMean">heart</div>
+              <div class="shp pinyin" id="sparkPin">xīn</div>
+            </div>
+          </div>
+          <div class="spark-text" id="sparkText"></div>
+          <div class="spark-foot">
+            <span class="known-pill" id="sparkExample"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="ft-brand">
+      <div class="big hanzi">偏旁部首</div>
+      <p style="margin:10px 0 0;max-width:34ch;font-size:.9rem;color:#a99e87">Built from two beginner study guides on the 214 Kangxi radicals. Radical = meaning hint. Phonetic = sound hint. Exposure locks it in.</p>
+    </div>
+    <div>
+      <h4>Practice here</h4>
+      <a href="#flashcards">Flashcards</a>
+      <a href="#reference">All 214 radicals</a>
+      <a href="#quiz">Mini quiz</a>
+      <a href="#lab">Study Lab</a>
+    </div>
+    <div>
+      <h4>Go deeper</h4>
+      <a href="https://www.pleco.com" target="_blank" rel="noopener">Pleco dictionary</a>
+      <a href="https://apps.ankiweb.net" target="_blank" rel="noopener">Anki flashcards</a>
+      <a href="https://www.archchinese.com/chinese_radicals.html" target="_blank" rel="noopener">Arch Chinese radical table</a>
+      <a href="https://www.duchinese.net" target="_blank" rel="noopener">Du Chinese graded reading</a>
+    </div>
+    <div class="fineprint">
+      <span class="hanzi">加油 · jiā yóu — “add fuel,” keep going.</span>
+      <span>Read 5 minutes of Chinese a day with a dictionary open. Real exposure beats drills.</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+/* ============================ DATA ============================ */
+/* tone detection from marked pinyin */
+const TONE_MAP={ā:1,ē:1,ī:1,ō:1,ū:1,ǖ:1,Ā:1,
+  á:2,é:2,í:2,ó:2,ú:2,ǘ:2,
+  ǎ:3,ě:3,ǐ:3,ǒ:3,ǔ:3,ǚ:3,
+  à:4,è:4,ì:4,ò:4,ù:4,ǜ:4};
+function toneOf(p){for(const ch of p){if(TONE_MAP[ch])return TONE_MAP[ch];}return 0;}
+function pinyinHTML(p){
+  // color the whole syllable group by its first toned vowel
+  const t=toneOf(p);
+  return '<span class="pinyin t'+t+'">'+p+'</span>';
+}
+
+/* Flashcard decks. Each item: {c: radical, alt, py, mean, ex, exPy, exMean, hook} */
+const DECKS={
+  top30:{name:"Top 30",sub:"highest-frequency radicals",cards:[
+    {c:"人",alt:"亻",py:"rén",mean:"person",ex:"他",exPy:"tā",exMean:"he",hook:"Someone standing upright."},
+    {c:"口",py:"kǒu",mean:"mouth",ex:"吃",exPy:"chī",exMean:"eat",hook:"Eating, speaking, calling — all start here."},
+    {c:"手",alt:"扌",py:"shǒu",mean:"hand",ex:"打",exPy:"dǎ",exMean:"hit",hook:"Any physical action: hit, pull, push, find."},
+    {c:"心",alt:"忄",py:"xīn",mean:"heart",ex:"想",exPy:"xiǎng",exMean:"think",hook:"Every emotion and thought word lives here."},
+    {c:"水",alt:"氵",py:"shuǐ",mean:"water",ex:"河",exPy:"hé",exMean:"river",hook:"氵 on the left, 水 standing alone."},
+    {c:"木",py:"mù",mean:"tree / wood",ex:"树",exPy:"shù",exMean:"tree",hook:"Trunk plus roots."},
+    {c:"火",alt:"灬",py:"huǒ",mean:"fire",ex:"热",exPy:"rè",exMean:"hot",hook:"灬 (four dots) is fire as a base."},
+    {c:"言",alt:"讠",py:"yán",mean:"speech",ex:"说",exPy:"shuō",exMean:"speak",hook:"Speaking, reading, please, thanks."},
+    {c:"女",py:"nǚ",mean:"woman",ex:"妈",exPy:"mā",exMean:"mother",hook:"A kneeling figure."},
+    {c:"日",py:"rì",mean:"sun",ex:"明",exPy:"míng",exMean:"bright",hook:"Sun + moon = bright."},
+    {c:"月",py:"yuè",mean:"moon",ex:"朋",exPy:"péng",exMean:"friend",hook:"Watch out: also means flesh/meat in body words."},
+    {c:"土",py:"tǔ",mean:"earth / dirt",ex:"地",exPy:"dì",exMean:"ground",hook:"Ground and places."},
+    {c:"金",alt:"钅",py:"jīn",mean:"metal / gold",ex:"钱",exPy:"qián",exMean:"money",hook:"Shiny metals: silver, money."},
+    {c:"艹",py:"cǎo",mean:"grass / plants",ex:"花",exPy:"huā",exMean:"flower",hook:"Sits on top: flower, tea, grass."},
+    {c:"纟",alt:"糸",py:"mì",mean:"thread / silk",ex:"红",exPy:"hóng",exMean:"red",hook:"Colours and textiles."},
+    {c:"目",py:"mù",mean:"eye",ex:"看",exPy:"kàn",exMean:"look",hook:"看 = a hand over an eye, shading to see far."},
+    {c:"宀",py:"mián",mean:"roof",ex:"家",exPy:"jiā",exMean:"home",hook:"The top of a house."},
+    {c:"食",alt:"饣",py:"shí",mean:"food / eat",ex:"饭",exPy:"fàn",exMean:"meal",hook:"Nourishment: meal, hungry."},
+    {c:"刀",alt:"刂",py:"dāo",mean:"knife",ex:"到",exPy:"dào",exMean:"arrive",hook:"Cutting and separating words."},
+    {c:"山",py:"shān",mean:"mountain",ex:"岛",exPy:"dǎo",exMean:"island",hook:"Three peaks."},
+    {c:"虫",py:"chóng",mean:"insect / bug",ex:"蛇",exPy:"shé",exMean:"snake",hook:"Crawling creatures."},
+    {c:"竹",py:"zhú",mean:"bamboo",ex:"筷",exPy:"kuài",exMean:"chopsticks",hook:"Hollow plant — chopsticks, brushes."},
+    {c:"走",py:"zǒu",mean:"walk / run",ex:"起",exPy:"qǐ",exMean:"rise",hook:"Fast feet."},
+    {c:"礻",alt:"示",py:"shì",mean:"altar / spirit",ex:"神",exPy:"shén",exMean:"spirit",hook:"Divine and spiritual things."},
+    {c:"田",py:"tián",mean:"field",ex:"男",exPy:"nán",exMean:"male",hook:"A rice-paddy grid. 男 = field + power."},
+    {c:"疒",py:"nè",mean:"illness",ex:"病",exPy:"bìng",exMean:"sick",hook:"A person lying in bed."},
+    {c:"辶",py:"chuò",mean:"road / walk",ex:"道",exPy:"dào",exMean:"way",hook:"Wraps the bottom-left: way, enter, far."},
+    {c:"阝",py:"fù/yì",mean:"hill / city",ex:"都",exPy:"dōu",exMean:"capital",hook:"Left = hill (阜), right = city (邑)."},
+    {c:"大",py:"dà",mean:"big",ex:"天",exPy:"tiān",exMean:"sky",hook:"Arms stretched wide."},
+    {c:"子",py:"zǐ",mean:"child",ex:"字",exPy:"zì",exMean:"character",hook:"A baby with arms out. 字 = roof + child."}
+  ]},
+  nature:{name:"Nature",sub:"stand-alone, spoken radicals",cards:[
+    {c:"水",py:"shuǐ",mean:"water",ex:"河",exPy:"hé",exMean:"river",hook:"Wavy lines of a stream."},
+    {c:"火",py:"huǒ",mean:"fire",ex:"热",exPy:"rè",exMean:"hot",hook:"Flames rising."},
+    {c:"木",py:"mù",mean:"tree / wood",ex:"林",exPy:"lín",exMean:"forest",hook:"Two trees = a forest."},
+    {c:"山",py:"shān",mean:"mountain",ex:"岛",exPy:"dǎo",exMean:"island",hook:"Three peaks."},
+    {c:"石",py:"shí",mean:"stone / rock",ex:"碗",exPy:"wǎn",exMean:"bowl",hook:"A boulder under a cliff."},
+    {c:"雨",py:"yǔ",mean:"rain",ex:"雪",exPy:"xuě",exMean:"snow",hook:"Drops falling from the sky."},
+    {c:"日",py:"rì",mean:"sun",ex:"明",exPy:"míng",exMean:"bright",hook:"Daytime, brightness."},
+    {c:"月",py:"yuè",mean:"moon",ex:"朋",exPy:"péng",exMean:"friend",hook:"A crescent at night."}
+  ]},
+  people:{name:"People & Body",sub:"who and what we are",cards:[
+    {c:"人",py:"rén",mean:"person",ex:"他",exPy:"tā",exMean:"he",hook:"Someone standing."},
+    {c:"女",py:"nǚ",mean:"woman",ex:"妈",exPy:"mā",exMean:"mother",hook:"A kneeling figure."},
+    {c:"子",py:"zǐ",mean:"child",ex:"字",exPy:"zì",exMean:"character",hook:"Baby with arms outstretched."},
+    {c:"心",py:"xīn",mean:"heart",ex:"想",exPy:"xiǎng",exMean:"think",hook:"Feelings and emotions."},
+    {c:"手",py:"shǒu",mean:"hand",ex:"打",exPy:"dǎ",exMean:"hit",hook:"Doing things."},
+    {c:"目",py:"mù",mean:"eye",ex:"看",exPy:"kàn",exMean:"look",hook:"For seeing."},
+    {c:"耳",py:"ěr",mean:"ear",ex:"听",exPy:"tīng",exMean:"listen",hook:"For hearing."},
+    {c:"口",py:"kǒu",mean:"mouth",ex:"吃",exPy:"chī",exMean:"eat",hook:"Speaking or eating."},
+    {c:"足",py:"zú",mean:"foot",ex:"跑",exPy:"pǎo",exMean:"run",hook:"Legs and walking."}
+  ]},
+  animals:{name:"Animals",sub:"creatures great and small",cards:[
+    {c:"犬",py:"quǎn",mean:"dog",ex:"狗",exPy:"gǒu",exMean:"dog",hook:"犭 on the left marks many animals."},
+    {c:"牛",py:"niú",mean:"cow / ox",ex:"牛",exPy:"niú",exMean:"cow",hook:"Horns on top."},
+    {c:"马",alt:"馬",py:"mǎ",mean:"horse",ex:"骑",exPy:"qí",exMean:"ride",hook:"A powerful animal — also a sound hint!"},
+    {c:"鱼",alt:"魚",py:"yú",mean:"fish",ex:"鲜",exPy:"xiān",exMean:"fresh",hook:"鱼 + 羊 = fresh."},
+    {c:"鸟",alt:"鳥",py:"niǎo",mean:"bird",ex:"鸡",exPy:"jī",exMean:"chicken",hook:"A flying creature."},
+    {c:"羊",py:"yáng",mean:"sheep / goat",ex:"美",exPy:"měi",exMean:"beautiful",hook:"羊 + 大 = beautiful."}
+  ]},
+  actions:{name:"Actions & Objects",sub:"things we use and do",cards:[
+    {c:"言",alt:"讠",py:"yán",mean:"speech",ex:"说",exPy:"shuō",exMean:"speak",hook:"Words and language."},
+    {c:"食",alt:"饣",py:"shí",mean:"food / eat",ex:"饭",exPy:"fàn",exMean:"meal",hook:"Nourishment."},
+    {c:"衣",alt:"衤",py:"yī",mean:"clothes",ex:"裤",exPy:"kù",exMean:"trousers",hook:"Wearing things."},
+    {c:"门",alt:"門",py:"mén",mean:"door / gate",ex:"间",exPy:"jiān",exMean:"between",hook:"An entrance."},
+    {c:"车",alt:"車",py:"chē",mean:"vehicle",ex:"轮",exPy:"lún",exMean:"wheel",hook:"Rolling wheels."},
+    {c:"刀",py:"dāo",mean:"knife",ex:"到",exPy:"dào",exMean:"arrive",hook:"A cutting tool."},
+    {c:"力",py:"lì",mean:"power",ex:"努",exPy:"nǔ",exMean:"effort",hook:"Muscles, strength."},
+    {c:"金",alt:"钅",py:"jīn",mean:"metal / gold",ex:"银",exPy:"yín",exMean:"silver",hook:"Shiny metals."}
+  ]}
+};
+
+/* All 214 radicals: [num, char(with variants), pinyin, meaning] */
+const ALL214=[
+[1,"一","yī","one line — one thing"],[2,"丨","gǔn","a pole — stick or post"],[3,"丶","zhǔ","a dot — drop of rain"],
+[4,"丿","piě","a slash — something falling"],[5,"乙","yǐ","bent line — a twisty hook"],[6,"亅","jué","hook — a coat-hanger hook"],
+[7,"二","èr","two lines — two things"],[8,"亠","tóu","lid — a rooftop"],[9,"人 / 亻","rén","person — standing"],
+[10,"儿","rén","legs — a person walking"],[11,"入","rù","enter — into a door"],[12,"八","bā","split — spreading apart"],
+[13,"冂","jiǒng","open box — a doorway"],[14,"冖","mì","cover — a blanket"],[15,"冫","bīng","ice — cold water"],
+[16,"几","jǐ","table — small desk"],[17,"凵","kǎn","open mouth — a hole"],[18,"刀 / 刂","dāo","knife — cutting tool"],
+[19,"力","lì","power — muscles"],[20,"勹","bāo","wrap — hugging arms"],[21,"匕","bǐ","spoon — eating tool"],
+[22,"匚","fāng","box — storage box"],[23,"匸","xǐ","hiding box — secret space"],[24,"十","shí","ten — plus sign"],
+[25,"卜","bǔ","divination — fortune telling"],[26,"卩","jié","seal — official stamp"],[27,"厂","hàn","cliff — rock wall"],
+[28,"厶","sī","private — secret stash"],[29,"又","yòu","hand — grabbing"],[30,"口","kǒu","mouth — speaking or eating"],
+[31,"囗","wéi","enclosure — fenced area"],[32,"土","tǔ","earth / dirt — the ground"],[33,"士","shì","scholar — educated person"],
+[34,"夂","zhǐ","walk slowly — going home"],[35,"夊","suī","walk — moving feet"],[36,"夕","xī","evening — sunset"],
+[37,"大","dà","big — arms stretched wide"],[38,"女","nǚ","woman — kneeling figure"],[39,"子","zǐ","child — baby arms out"],
+[40,"宀","mián","roof — top of a house"],[41,"寸","cùn","inch — small measure"],[42,"小","xiǎo","small — tiny thing"],
+[43,"尢","wāng","weak leg — limping"],[44,"尸","shī","body — lying person"],[45,"屮","chè","sprout — baby plant"],
+[46,"山","shān","mountain — three peaks"],[47,"巛","chuān","river — flowing water"],[48,"工","gōng","work — craftsman tools"],
+[49,"己","jǐ","self — personal mark"],[50,"巾","jīn","cloth / towel — hanging fabric"],[51,"干","gān","dry — drying clothes"],
+[52,"幺","yāo","tiny — very small"],[53,"广","yǎn","shelter — cliff cave"],[54,"廴","yǐn","long walk — a road"],
+[55,"廾","gǒng","hands up — holding high"],[56,"弋","yì","spear on a line — weapon"],[57,"弓","gōng","bow — archery bow"],
+[58,"彐","jì","pig snout — animal face"],[59,"彡","shān","hair — texture / decoration"],[60,"彳","chì","step — walking"],
+[61,"心 / 忄","xīn","heart — feelings & emotions"],[62,"戈","gē","spear — fighting"],[63,"戶","hù","door — house door"],
+[64,"手 / 扌","shǒu","hand — doing things"],[65,"支","zhī","branch — support"],[66,"攴","pū","tap — knock gently"],
+[67,"文","wén","writing — patterns / culture"],[68,"斗","dǒu","ladle — measuring vessel"],[69,"斤","jīn","axe — chopping"],
+[70,"方","fāng","direction — compass"],[71,"无","wú","nothing — empty"],[72,"日","rì","sun — daytime"],
+[73,"曰","yuē","say — speaking"],[74,"月","yuè","moon — night"],[75,"木","mù","tree / wood — trunk + roots"],
+[76,"欠","qiàn","yawn — tired"],[77,"止","zhǐ","stop — feet stopped"],[78,"歹","dǎi","bones / bad — danger"],
+[79,"殳","shū","weapon — hitting"],[80,"毋","wú","don't — a stop sign"],[81,"比","bǐ","compare — side by side"],
+[82,"毛","máo","fur / hair — animal coat"],[83,"氏","shì","clan — ancestral name"],[84,"气","qì","air / breath — vital energy"],
+[85,"水 / 氵","shuǐ","water — liquid"],[86,"火 / 灬","huǒ","fire — flames"],[87,"爪","zhǎo","claw — grabbing"],
+[88,"父","fù","father — strong man"],[89,"爻","yáo","mix — crossing lines"],[90,"爿","pán","bed / plank — wooden board"],
+[91,"片","piàn","slice — thin piece"],[92,"牙","yá","tooth — biting"],[93,"牛","niú","cow / ox — farm animal"],
+[94,"犬 / 犭","quǎn","dog — animals"],[95,"玄","xuán","mystery — deep meaning"],[96,"玉 / 王","yù","jade — precious stone"],
+[97,"瓜","guā","melon — hanging fruit"],[98,"瓦","wǎ","tile — curved roof tile"],[99,"甘","gān","sweet — pleasant"],
+[100,"生","shēng","life — a plant sprouting"],[101,"用","yòng","use — tool in action"],[102,"田","tián","field — rice-paddy grid"],
+[103,"疋","pǐ","cloth — a bolt of fabric"],[104,"疒","nè","sick — a person in bed"],[105,"癶","bō","feet up — a running start"],
+[106,"白","bái","white — brightness / purity"],[107,"皮","pí","skin — outer layer / peel"],[108,"皿","mǐn","dish / bowl — container"],
+[109,"目","mù","eye — for seeing"],[110,"矛","máo","spear — long weapon"],[111,"矢","shǐ","arrow — straight / swift"],
+[112,"石","shí","stone / rock — solid"],[113,"示 / 礻","shì","altar — divine / spirit"],[114,"禸","róu","animal track — footprint"],
+[115,"禾","hé","grain — rice plant / crops"],[116,"穴","xué","cave / hole — hollow space"],[117,"立","lì","stand — upright person"],
+[118,"竹","zhú","bamboo — hollow plant"],[119,"米","mǐ","rice — scattered grains"],[120,"糸 / 纟","mì","thread / silk — textiles"],
+[121,"缶","fǒu","jar / pot — clay vessel"],[122,"网","wǎng","net — mesh for catching"],[123,"羊","yáng","sheep — woolly animal"],
+[124,"羽","yǔ","feather / wing — delicate"],[125,"老","lǎo","old — a bent elder"],[126,"而","ér","beard / and — connecting"],
+[127,"耒","lěi","plow — farming tool"],[128,"耳","ěr","ear — for hearing"],[129,"聿","yù","brush — writer's tool"],
+[130,"肉 / 月","ròu","meat / flesh — body tissue"],[131,"臣","chén","servant — a helper"],[132,"自","zì","self — me / from"],
+[133,"至","zhì","arrive — reach a place"],[134,"臼","jiù","mortar — grinding bowl"],[135,"舌","shé","tongue — tasting"],
+[136,"舛","chuǎn","wrong — feet apart"],[137,"舟","zhōu","boat — wooden vessel"],[138,"艮","gèn","stubborn — stopping"],
+[139,"色","sè","colour — appearance"],[140,"艸 / 艹","cǎo","grass / plants — vegetation"],[141,"虍","hū","tiger stripe — fierce"],
+[142,"虫","chóng","bug / insect — creatures"],[143,"血","xuè","blood — life force"],[144,"行","xíng","walk / go — movement"],
+[145,"衣 / 衤","yī","clothing — wearing"],[146,"襾","yà","cover / lid — over something"],[147,"見","jiàn","see — eyes + legs"],
+[148,"角","jiǎo","horn — animal horn / corner"],[149,"言 / 讠","yán","speak — language / words"],[150,"谷","gǔ","valley — low land"],
+[151,"豆","dòu","bean — food pods"],[152,"豕","shǐ","pig — plump farm animal"],[153,"豸","zhài","beast — wild predator"],
+[154,"貝","bèi","shell — ancient money"],[155,"赤","chì","red — fire colour"],[156,"走","zǒu","walk / run — fast feet"],
+[157,"足","zú","foot / leg — walking"],[158,"身","shēn","body — physical self"],[159,"車","chē","vehicle — rolling wheels"],
+[160,"辛","xīn","bitter — taste of hardship"],[161,"辰","chén","morning — celestial sign"],[162,"辵 / 辶","chuò","walk / road — movement"],
+[163,"邑 / 阝","yì","city / town — settlement"],[164,"酉","yǒu","wine jar — fermented"],[165,"釆","biàn","divide — sorting things"],
+[166,"里","lǐ","village — neighbourhood"],[167,"金 / 钅","jīn","metal / gold — shiny"],[168,"長 / 长","cháng","long — growing / stretching"],
+[169,"門 / 门","mén","door / gate — entrance"],[170,"阜 / 阝","fù","hill / mound — rising earth"],[171,"隶","lì","capture — apprehending"],
+[172,"隹","zhuī","short-tailed bird"],[173,"雨","yǔ","rain — water falling"],[174,"青","qīng","blue-green — famous sound hint!"],
+[175,"非","fēi","wrong / not — two wings apart"],[176,"面","miàn","face — front surface"],[177,"革","gé","leather — tough skin"],
+[178,"韋","wéi","soft leather — tanned"],[179,"韭","jiǔ","chives — flat leaves"],[180,"音","yīn","sound / music — resonating"],
+[181,"頁","yè","head / page — top of person"],[182,"風 / 风","fēng","wind — moving air"],[183,"飛 / 飞","fēi","fly — soaring in air"],
+[184,"食 / 饣","shí","eat / food — nourishment"],[185,"首","shǒu","head / first — leader"],[186,"香","xiāng","fragrance — wonderful smell"],
+[187,"馬 / 马","mǎ","horse — powerful animal"],[188,"骨","gǔ","bone — skeleton inside"],[189,"高","gāo","tall / high — a tower"],
+[190,"髟","biāo","long hair — hairstyle"],[191,"鬥","dòu","fight — battle"],[192,"鬯","chàng","ritual wine — herbs"],
+[193,"鬲","gé","ancient cooking pot"],[194,"鬼","guǐ","ghost / spirit — supernatural"],[195,"魚 / 鱼","yú","fish — swimming creature"],
+[196,"鳥 / 鸟","niǎo","bird — flying creature"],[197,"鹵 / 卤","lǔ","salty land — salt flats"],[198,"鹿","lù","deer — graceful animal"],
+[199,"麥 / 麦","mài","wheat — bread grain"],[200,"麻","má","hemp — plant fibre"],[201,"黃 / 黄","huáng","yellow — imperial colour"],
+[202,"黍","shǔ","millet — ancient grain"],[203,"黑","hēi","black — darkest colour"],[204,"黹","zhǐ","embroidery — stitching"],
+[205,"黽 / 黾","měng","frog — croaking amphibian"],[206,"鼎","dǐng","bronze cauldron — ancient pot"],[207,"鼓","gǔ","drum — percussion"],
+[208,"鼠","shǔ","mouse / rat — small animal"],[209,"鼻","bí","nose — smelling"],[210,"齊 / 齐","qí","neat / together — aligned"],
+[211,"齒 / 齿","chǐ","teeth — chewing"],[212,"龍 / 龙","lóng","dragon — mythical power"],[213,"龜 / 龟","guī","turtle — long life"],
+[214,"龠","yuè","flute / pipe — wind instrument"]
+];
+
+/* Sound families for the decoder. radical shown with its meaning. */
+const FAMILIES=[
+  {phon:"青",phonPy:"qīng",phonMean:"blue-green / fresh",
+   note:"清 情 晴 请 all carry 青 — the most famous sound hint in Chinese. The radical on the left swaps the meaning; the sound stays close to qīng.",
+   members:[
+    {c:"清",rad:"氵",radMean:"water",py:"qīng",mean:"clear / clean",why:"Water that is clear — 氵 (water) + 青."},
+    {c:"情",rad:"忄",radMean:"heart",py:"qíng",mean:"emotion / feeling",why:"Feeling comes from the heart — 忄 + 青."},
+    {c:"晴",rad:"日",radMean:"sun",py:"qíng",mean:"sunny weather",why:"A clear sky needs sun — 日 + 青."},
+    {c:"请",rad:"讠",radMean:"speech",py:"qǐng",mean:"please / invite",why:"A polite request is spoken — 讠 + 青."}
+  ]},
+  {phon:"可",phonPy:"kě",phonMean:"can / may",
+   note:"可 lends its sound (kě → hé / gē) to a whole family. Notice the sound drifts a little — hints are helpful, not perfect.",
+   members:[
+    {c:"河",rad:"氵",radMean:"water",py:"hé",mean:"river",why:"A river is flowing water — 氵 + 可."},
+    {c:"何",rad:"亻",radMean:"person",py:"hé",mean:"what / why",why:"A person asking — 亻 + 可."},
+    {c:"荷",rad:"艹",radMean:"grass / plant",py:"hé",mean:"lotus flower",why:"A water plant — 艹 + 可."},
+    {c:"歌",rad:"欠",radMean:"yawn / open mouth",py:"gē",mean:"song",why:"Sung with an open mouth — 可 + 欠."}
+  ]},
+  {phon:"马",phonPy:"mǎ",phonMean:"horse",
+   note:"马 (horse) is both a meaning radical and a sound hint. Here it sits as the sound: every member sounds like mǎ.",
+   members:[
+    {c:"妈",rad:"女",radMean:"woman",py:"mā",mean:"mother",why:"A female who sounds like 'ma' — 女 + 马."},
+    {c:"码",rad:"石",radMean:"stone",py:"mǎ",mean:"code / number",why:"Counting stones — 石 + 马."},
+    {c:"蚂",rad:"虫",radMean:"insect",py:"mǎ",mean:"ant",why:"A tiny insect — 虫 + 马."},
+    {c:"骂",rad:"口口",radMean:"two mouths",py:"mà",mean:"to scold",why:"Two mouths over a horse — loud scolding — 吅 + 马."}
+  ]},
+  {phon:"也",phonPy:"yě",phonMean:"also / too",
+   note:"也 sounds quite different across this family (yě → dì, tā, chí) — proof that you still verify the sound once, then store it.",
+   members:[
+    {c:"地",rad:"土",radMean:"earth",py:"dì",mean:"ground / earth",why:"Earth underfoot — 土 + 也."},
+    {c:"他",rad:"亻",radMean:"person",py:"tā",mean:"he / him",why:"A male person — 亻 + 也."},
+    {c:"她",rad:"女",radMean:"woman",py:"tā",mean:"she / her",why:"A female person — 女 + 也."},
+    {c:"池",rad:"氵",radMean:"water",py:"chí",mean:"pond / pool",why:"A small body of water — 氵 + 也."}
+  ]},
+  {phon:"方",phonPy:"fāng",phonMean:"direction / square",
+   note:"方 (fāng) keeps its sound closely across this family — a clean, reliable hint.",
+   members:[
+    {c:"放",rad:"攵",radMean:"tap / action",py:"fàng",mean:"release / put",why:"An action of letting go — 方 + 攵."},
+    {c:"房",rad:"户",radMean:"door",py:"fáng",mean:"room / house",why:"A space behind a door — 户 + 方."},
+    {c:"访",rad:"讠",radMean:"speech",py:"fǎng",mean:"visit / interview",why:"Going to speak with someone — 讠 + 方."}
+  ]}
+];
+
+/* Story spark building blocks */
+const SPARK_RADICALS=[
+  {c:"心",py:"xīn",mean:"heart",ex:"想 xiǎng — think"},
+  {c:"水",py:"shuǐ",mean:"water",ex:"河 hé — river"},
+  {c:"火",py:"huǒ",mean:"fire",ex:"热 rè — hot"},
+  {c:"木",py:"mù",mean:"tree",ex:"林 lín — forest"},
+  {c:"口",py:"kǒu",mean:"mouth",ex:"吃 chī — eat"},
+  {c:"山",py:"shān",mean:"mountain",ex:"岛 dǎo — island"},
+  {c:"目",py:"mù",mean:"eye",ex:"看 kàn — look"},
+  {c:"手",py:"shǒu",mean:"hand",ex:"打 dǎ — hit"},
+  {c:"雨",py:"yǔ",mean:"rain",ex:"雪 xuě — snow"},
+  {c:"虫",py:"chóng",mean:"insect",ex:"蛇 shé — snake"},
+  {c:"马",py:"mǎ",mean:"horse",ex:"骑 qí — ride"},
+  {c:"鱼",py:"yú",mean:"fish",ex:"鲜 xiān — fresh"},
+  {c:"门",py:"mén",mean:"door",ex:"间 jiān — between"},
+  {c:"金",py:"jīn",mean:"metal",ex:"钱 qián — money"}
+];
+const SPARK_SCENES=[
+  "is throwing a surprise party in your kitchen at 3am, and absolutely refuses to leave until you admit you remember it.",
+  "has rented the apartment next door and plays loud music shaped exactly like its own meaning.",
+  "fell out of your cereal box this morning, looked you dead in the eye, and introduced itself by name.",
+  "is the size of a school bus, glowing faintly, and following you down the street like a lost puppy.",
+  "got stuck to the bottom of your shoe and now narrates everything you do in a tiny squeaky voice.",
+  "challenged you to a staring contest and has not blinked in four days.",
+  "is wearing a tiny hat, riding a skateboard through your living room, yelling its own pinyin.",
+  "keeps appearing in your dreams, redecorating the rooms to match exactly what it means.",
+  "showed up at your door dripping wet, demanding to be drawn nine times before it will go home."
+];
+
+/* ============================ HELPERS ============================ */
+const $=(s,r=document)=>r.querySelector(s);
+const $$=(s,r=document)=>[...r.querySelectorAll(s)];
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]];}return a;}
+function pick(a){return a[Math.random()*a.length|0];}
+
+/* ============================ FLASHCARDS ============================ */
+let curDeck="top30", order=[], pos=0, known=new Set();
+
+function buildDeckPicker(){
+  const wrap=$("#deckPicker");
+  wrap.innerHTML="";
+  Object.entries(DECKS).forEach(([key,d])=>{
+    const b=document.createElement("button");
+    b.className="deck-btn"+(key===curDeck?" active":"");
+    b.innerHTML=d.name+' <span class="cnt">'+d.cards.length+'</span>';
+    b.onclick=()=>{curDeck=key;known=new Set();order=DECKS[key].cards.map((_,i)=>i);pos=0;
+      $$(".deck-btn").forEach(x=>x.classList.remove("active"));b.classList.add("active");renderCard();};
+    wrap.appendChild(b);
+  });
+  order=DECKS[curDeck].cards.map((_,i)=>i);
+}
+
+function renderCard(){
+  const deck=DECKS[curDeck].cards;
+  const card=deck[order[pos]];
+  $("#flip").classList.remove("is-flipped");
+  $("#fChar").textContent=card.c;
+  $("#fTag").textContent=card.alt?("also "+card.alt):"radical";
+  $("#fIdx").textContent="#"+(pos+1);
+  $("#bIdx").textContent="#"+(pos+1);
+  $("#bPinyin").innerHTML=pinyinHTML(card.py);
+  $("#bMean").textContent=card.mean;
+  $("#bExample").innerHTML='<span class="exc hanzi">'+card.ex+'</span> '+pinyinHTML(card.exPy)+' — '+card.exMean;
+  $("#bHook").textContent=card.hook||"";
+  $("#cardIdx").textContent=(pos+1)+" / "+deck.length;
+  $("#cardBar").style.width=((pos+1)/deck.length*100)+"%";
+  $("#knownCount").textContent="✓ "+known.size+" known";
+  $("#prevBtn").disabled=pos===0;
+  $("#nextBtn").disabled=pos===deck.length-1;
+  const isKnown=known.has(order[pos]);
+  $("#knownBtn").style.opacity=isKnown?"1":".75";
+  $("#knownBtn").innerHTML=isKnown?"✓ Known":"✓ Known";
+  $("#knownBtn").style.background=isKnown?"var(--celadon)":"var(--paper-card)";
+  $("#knownBtn").style.color=isKnown?"#f3efe3":"var(--ink)";
+  $("#knownBtn").style.borderColor=isKnown?"var(--celadon)":"var(--line)";
+}
+function flipCard(){$("#flip").classList.toggle("is-flipped");}
+function nextCard(){if(pos<DECKS[curDeck].cards.length-1){pos++;renderCard();}}
+function prevCard(){if(pos>0){pos--;renderCard();}}
+
+$("#flip").addEventListener("click",flipCard);
+$("#flip").addEventListener("keydown",e=>{
+  if(e.code==="Space"||e.code==="Enter"){e.preventDefault();flipCard();}
+  if(e.code==="ArrowRight"){nextCard();}
+  if(e.code==="ArrowLeft"){prevCard();}
+});
+$("#flipBtn").onclick=e=>{e.stopPropagation();flipCard();};
+$("#nextBtn").onclick=nextCard;
+$("#prevBtn").onclick=prevCard;
+$("#shuffleBtn").onclick=()=>{order=shuffle(order);pos=0;renderCard();};
+$("#knownBtn").onclick=()=>{const id=order[pos];if(known.has(id))known.delete(id);else known.add(id);renderCard();
+  if(known.has(id))setTimeout(nextCard,180);};
+
+/* ============================ REFERENCE GRID ============================ */
+function renderRef(filter=""){
+  const grid=$("#refGrid");grid.innerHTML="";
+  const f=filter.trim().toLowerCase();
+  const rows=ALL214.filter(r=>{
+    if(!f)return true;
+    return String(r[0])===f || r[1].includes(filter) ||
+      r[2].toLowerCase().includes(f) ||
+      r[2].normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().includes(f) ||
+      r[3].toLowerCase().includes(f);
+  });
+  rows.forEach(r=>{
+    const cell=document.createElement("div");
+    cell.className="ref-cell";
+    cell.innerHTML='<span class="num">'+String(r[0]).padStart(3,"0")+'</span>'+
+      '<span class="rc hanzi">'+r[1]+'</span>'+
+      '<span class="rp">'+pinyinHTML(r[2])+'</span>'+
+      '<span class="rm">'+r[3]+'</span>';
+    grid.appendChild(cell);
+  });
+  $("#refCount").textContent=rows.length+" of 214 radicals shown";
+}
+$("#refSearch").addEventListener("input",e=>renderRef(e.target.value));
+
+/* ============================ QUIZ ============================ */
+const QPOOL=DECKS.top30.cards.concat(DECKS.nature.cards,DECKS.people.cards,DECKS.animals.cards,DECKS.actions.cards)
+  .filter((v,i,a)=>a.findIndex(x=>x.mean===v.mean)===i);
+let qList=[], qIdx=0, qScore=0, answered=false;
+
+function makeQuestions(){
+  const pool=shuffle(QPOOL);
+  const qs=[];
+  // type a: meaning -> pick radical
+  // type b: radical -> pick meaning
+  // type c: example char -> which radical
+  // type d: sound family
+  const used=new Set();
+  let i=0;
+  while(qs.length<8 && i<pool.length){
+    const card=pool[i++]; if(used.has(card.mean))continue; used.add(card.mean);
+    const others=shuffle(QPOOL.filter(c=>c.mean!==card.mean));
+    const type=qs.length%3;
+    if(type===0){
+      const opts=shuffle([card,...others.slice(0,3)]);
+      qs.push({prompt:'Which radical means <b>'+card.mean+'</b>?',sub:"meaning → radical",
+        opts:opts.map(o=>({label:o.c,han:true,correct:o.mean===card.mean}))});
+    }else if(type===1){
+      const opts=shuffle([card,...others.slice(0,3)]);
+      qs.push({prompt:'<span class="big hanzi">'+card.c+'</span> — what does this radical mean?',sub:"radical → meaning",
+        opts:opts.map(o=>({label:o.mean,correct:o.mean===card.mean}))});
+    }else{
+      const opts=shuffle([card,...others.slice(0,3)]);
+      qs.push({prompt:'<span class="big hanzi">'+card.ex+'</span> ('+card.exMean+') — which radical is inside it?',sub:"character → radical",
+        opts:opts.map(o=>({label:o.c+" · "+o.mean,han:false,correct:o.mean===card.mean}))});
+    }
+  }
+  // two sound-family questions
+  shuffle(FAMILIES).slice(0,2).forEach(fam=>{
+    const m=pick(fam.members);
+    const wrongFams=shuffle(FAMILIES.filter(f=>f.phon!==fam.phon)).slice(0,3);
+    const opts=shuffle([{label:fam.phonPy.replace(/[0-9]/,""),correct:true},
+      ...wrongFams.map(f=>({label:f.phonPy,correct:false}))]);
+    qs.push({prompt:'<span class="big hanzi">'+fam.members.map(x=>x.c).join(" ")+'</span><br>These share a sound hint. Which sound?',
+      sub:"sound family",opts});
+  });
+  return shuffle(qs).slice(0,10);
+}
+
+function renderQuestion(){
+  answered=false;
+  const q=qList[qIdx];
+  $("#qProgress").textContent="Question "+(qIdx+1)+" / "+qList.length;
+  $("#qScore").textContent=qScore;
+  const card=$("#qcard");
+  card.innerHTML='<div class="qprompt">'+q.prompt+'</div>'+
+    '<div class="qsub">'+q.sub+'</div>'+
+    '<div class="opts" id="opts"></div>'+
+    '<div class="qfoot"><span class="qfeedback" id="qfb"></span><span id="qnextWrap"></span></div>';
+  const opts=$("#opts");
+  q.opts.forEach(o=>{
+    const b=document.createElement("button");
+    b.className="opt";
+    b.innerHTML=o.han?('<span class="oc hanzi">'+o.label+'</span>'):o.label;
+    b.onclick=()=>answer(b,o,q);
+    opts.appendChild(b);
+  });
+}
+function answer(btn,opt,q){
+  if(answered)return; answered=true;
+  const all=$$("#opts .opt");
+  all.forEach((b,i)=>{b.disabled=true;if(q.opts[i].correct)b.classList.add("correct");});
+  const fb=$("#qfb");
+  if(opt.correct){qScore++;fb.className="qfeedback good";fb.textContent="✓ Correct";}
+  else{btn.classList.add("wrong");fb.className="qfeedback bad";fb.textContent="✗ Not quite — the right answer is highlighted.";}
+  $("#qScore").textContent=qScore;
+  const nb=document.createElement("button");
+  nb.className="btn primary";nb.style.padding="9px 18px";
+  nb.textContent=qIdx<qList.length-1?"Next →":"See results";
+  nb.onclick=()=>{qIdx++;qIdx<qList.length?renderQuestion():showResults();};
+  $("#qnextWrap").appendChild(nb);
+}
+function showResults(){
+  const pct=Math.round(qScore/qList.length*100);
+  let msg;
+  if(pct>=90)msg="You're reading the system, not memorising it. 厉害！";
+  else if(pct>=70)msg="Solid. The high-frequency radicals are sticking.";
+  else if(pct>=40)msg="Good start — run the flashcards again and come back.";
+  else msg="No worries. Drill the Top 30 deck first, then retry.";
+  $("#qcard").innerHTML='<div class="qresult"><div class="big-score">'+qScore+' / '+qList.length+'</div>'+
+    '<div class="rmsg">'+msg+'</div>'+
+    '<button class="btn primary" id="qRetry">↻ New quiz</button></div>';
+  $("#qRetry").onclick=startQuiz;
+}
+function startQuiz(){qList=makeQuestions();qIdx=0;qScore=0;renderQuestion();}
+
+/* ============================ STUDY LAB ============================ */
+$$(".lab-tab").forEach(t=>t.onclick=()=>{
+  $$(".lab-tab").forEach(x=>x.classList.remove("active"));t.classList.add("active");
+  const which=t.dataset.lab;
+  $("#lab-decoder").hidden=which!=="decoder";
+  $("#lab-spark").hidden=which!=="spark";
+});
+
+/* decoder */
+let curFam=0;
+function buildFamPicker(){
+  const wrap=$("#famPick");wrap.innerHTML="";
+  FAMILIES.forEach((f,i)=>{
+    const c=document.createElement("button");
+    c.className="fam-chip"+(i===curFam?" active":"");
+    c.innerHTML='<span class="fc hanzi">'+f.phon+'</span><span class="fp">'+f.phonPy+' · '+f.phonMean+'</span>';
+    c.onclick=()=>{curFam=i;$$(".fam-chip").forEach(x=>x.classList.remove("active"));c.classList.add("active");renderFamily();};
+    wrap.appendChild(c);
+  });
+}
+function renderFamily(){
+  const fam=FAMILIES[curFam];
+  $("#famNote").textContent=fam.note;
+  const list=$("#members");list.innerHTML="";
+  fam.members.forEach(m=>{
+    const b=document.createElement("button");
+    b.className="member";
+    b.innerHTML='<span class="mc hanzi">'+m.c+'</span>'+
+      '<span class="mtext"><span class="mp">'+pinyinHTML(m.py)+'</span> · <span class="mm">'+m.mean+'</span></span>'+
+      '<span class="mrad">'+m.rad+' '+m.radMean+'</span>';
+    b.onclick=()=>{$$("#members .member").forEach(x=>x.classList.remove("active"));b.classList.add("active");buildChar(m,fam);};
+    list.appendChild(b);
+  });
+  // reset builder
+  $("#builder").innerHTML='<div class="build-empty" id="buildEmpty">Pick a character on the right to watch it assemble — meaning hint plus the <b class="hanzi" style="color:var(--ochre)">'+fam.phon+'</b> sound hint.</div>';
+}
+function buildChar(m,fam){
+  const b=$("#builder");
+  b.innerHTML=
+    '<div class="build-eq">'+
+      '<div class="piece"><span class="pc radical hanzi">'+m.rad+'</span><span class="lbl">'+m.radMean+'</span></div>'+
+      '<span class="op">+</span>'+
+      '<div class="piece"><span class="pc phon hanzi">'+fam.phon+'</span><span class="lbl">sound ~'+fam.phonPy+'</span></div>'+
+      '<span class="op">=</span>'+
+      '<div class="piece"><span class="pc result hanzi">'+m.c+'</span><span class="lbl">'+m.py+'</span></div>'+
+    '</div>'+
+    '<div class="build-read"><span class="bigp">'+pinyinHTML(m.py)+'</span> &nbsp; <span class="bigm">'+m.mean+'</span></div>'+
+    '<div class="build-why">'+m.why+'</div>';
+}
+
+/* story spark */
+function buildSparkSelect(){
+  const sel=$("#sparkSelect");
+  SPARK_RADICALS.forEach((r,i)=>{
+    const o=document.createElement("option");o.value=i;o.textContent=r.c+"  "+r.py+" — "+r.mean;sel.appendChild(o);
+  });
+  sel.onchange=()=>renderSpark(+sel.value);
+}
+function renderSpark(i){
+  const r=SPARK_RADICALS[i];
+  $("#sparkChar").textContent=r.c;
+  $("#sparkMean").textContent=r.mean;
+  $("#sparkPin").innerHTML=pinyinHTML(r.py);
+  $("#sparkExample").innerHTML='shows up in <span class="hanzi" style="font-size:1.1rem">'+r.ex.split(" ")[0]+'</span> '+r.ex.split(" ").slice(1).join(" ");
+  const scene=pick(SPARK_SCENES);
+  $("#sparkText").innerHTML='Picture <span class="hl">'+r.mean.toUpperCase()+'</span> (<span class="hanzi">'+r.c+'</span>, <i>'+r.py+'</i>) — it '+scene;
+}
+$("#sparkBtn").onclick=()=>renderSpark(+$("#sparkSelect").value);
+
+/* ============================ NAV + REVEAL ============================ */
+const navLinks=$$("#navlinks a");
+const sections=["flashcards","reference","quiz","lab"].map(id=>$("#"+id));
+const navObs=new IntersectionObserver(es=>{
+  es.forEach(e=>{if(e.isIntersecting){
+    navLinks.forEach(a=>a.classList.toggle("active",a.getAttribute("href")==="#"+e.target.id));
+  }});
+},{rootMargin:"-45% 0px -50% 0px"});
+sections.forEach(s=>s&&navObs.observe(s));
+
+const revObs=new IntersectionObserver(es=>{
+  es.forEach(e=>{if(e.isIntersecting){e.target.classList.add("in");revObs.unobserve(e.target);}});
+},{threshold:.12});
+$$(".reveal").forEach(el=>revObs.observe(el));
+
+/* ============================ INIT ============================ */
+buildDeckPicker();renderCard();
+renderRef();
+startQuiz();
+buildFamPicker();renderFamily();
+buildSparkSelect();renderSpark(0);
+</script>
+</body>
+</html>
