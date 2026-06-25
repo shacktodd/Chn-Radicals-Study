@@ -311,6 +311,13 @@
   .reveal.in{opacity:1;transform:none}
   @media (prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none;transition:none}.flip-inner{transition:none}}
   @media(max-width:820px){.hero-grid{grid-template-columns:1fr;gap:30px}.hero .tianzige{max-width:300px;margin:0 auto}.nav nav{display:none}}
+  .tts-note{position:fixed;left:50%;bottom:16px;transform:translateX(-50%);z-index:200;max-width:min(560px,calc(100vw - 24px));
+    background:var(--ink);color:#e9dfca;border:1px solid rgba(216,205,182,.25);border-radius:12px;
+    padding:12px 14px 12px 16px;box-shadow:0 12px 30px -10px rgba(0,0,0,.5);font-size:.84rem;line-height:1.45;
+    display:flex;align-items:flex-start;gap:10px}
+  .tts-note .tts-fix{display:block;color:#a99e87;margin-top:3px;font-size:.78rem}
+  .tts-note button{flex:none;background:transparent;border:0;color:#a99e87;font-size:1.3rem;line-height:1;cursor:pointer;padding:0 2px;margin-top:-2px}
+  .tts-note button:hover{color:var(--paper)}
   [hidden]{display:none!important}
 </style>
 </head>
@@ -524,27 +531,78 @@
   </div>
 </footer>
 
+<div id="ttsNote" class="tts-note" hidden role="status">
+  <span>No Chinese (zh-CN) voice is installed on this device, so audio may be silent or read incorrectly.<span class="tts-fix">Android: Settings → System → Languages &amp; input → Text-to-speech output → install a Chinese voice (Google’s engine offers one), then reload this page.</span></span>
+  <button id="ttsNoteClose" aria-label="Dismiss">&times;</button>
+</div>
+
 <script>
-/* ===================== AUDIO ===================== */
-let zhVoice=null, voicesReady=false;
-function loadVoices(){
-  if(!('speechSynthesis' in window))return;
-  const vs=speechSynthesis.getVoices();
-  if(!vs.length)return;
-  zhVoice = vs.find(v=>/^zh[-_]?CN/i.test(v.lang)) ||
+/* ===================== AUDIO (mobile-hardened) ===================== */
+const SUPPORTS_TTS = ('speechSynthesis' in window) && ('SpeechSynthesisUtterance' in window);
+let zhVoice=null, voicesLoaded=false, primed=false, noticeShown=false, pendingText=null;
+
+function scanVoices(){
+  if(!SUPPORTS_TTS) return false;
+  const vs = speechSynthesis.getVoices();
+  if(!vs || !vs.length) return false;
+  voicesLoaded = true;
+  zhVoice = vs.find(v=>/^zh[-_]?(cn|hans|sg)/i.test(v.lang)) ||
             vs.find(v=>/^zh/i.test(v.lang)) ||
-            vs.find(v=>/chinese|mandarin|普通话|国语/i.test(v.name)) || null;
-  voicesReady=true;
+            vs.find(v=>/chinese|mandarin|putonghua|普通话|国语|中文/i.test(v.name||"")) || null;
+  return true;
 }
-if('speechSynthesis' in window){ loadVoices(); speechSynthesis.onvoiceschanged=loadVoices; }
-function speak(text){
-  if(!('speechSynthesis' in window)||!text)return;
+function showTtsNotice(){
+  if(noticeShown) return; noticeShown = true;
+  const el=document.getElementById("ttsNote"); if(el) el.hidden=false;
+}
+function doSpeak(text){
   try{
+    /* Android Chrome sometimes leaves the queue paused/stuck */
+    if(speechSynthesis.paused) speechSynthesis.resume();
     speechSynthesis.cancel();
     const u=new SpeechSynthesisUtterance(text);
-    u.lang='zh-CN'; if(zhVoice)u.voice=zhVoice; u.rate=.82; u.pitch=1;
+    u.lang="zh-CN"; if(zhVoice) u.voice=zhVoice; u.rate=.82; u.pitch=1; u.volume=1;
     speechSynthesis.speak(u);
+    /* nudge against Chrome's auto-pause */
+    setTimeout(()=>{ try{ if(speechSynthesis.paused) speechSynthesis.resume(); }catch(e){} },120);
   }catch(e){}
+}
+function speak(text){
+  if(!SUPPORTS_TTS || !text) return;
+  if(!voicesLoaded) scanVoices();
+  if(!voicesLoaded){
+    /* voices often arrive a beat late on mobile — queue once and retry */
+    pendingText = text;
+    setTimeout(()=>{
+      scanVoices();
+      const t = pendingText; pendingText = null;
+      if(!t) return;
+      if(voicesLoaded && !zhVoice) showTtsNotice();
+      doSpeak(t); /* best effort even if the list is still empty */
+    }, 400);
+    return;
+  }
+  if(!zhVoice) showTtsNotice();
+  doSpeak(text);
+}
+/* Prime the speech engine on the very first user gesture (mobile requirement) */
+function primeTTS(){
+  if(primed || !SUPPORTS_TTS) return;
+  primed = true;
+  try{
+    const u=new SpeechSynthesisUtterance(" ");
+    u.volume=0; speechSynthesis.speak(u); /* silent unlock inside the gesture */
+  }catch(e){}
+  scanVoices();
+}
+if(SUPPORTS_TTS){
+  scanVoices();
+  speechSynthesis.onvoiceschanged=()=>{
+    scanVoices();
+    if(pendingText){ const t=pendingText; pendingText=null; if(voicesLoaded && !zhVoice) showTtsNotice(); doSpeak(t); }
+  };
+  ["pointerdown","touchend","click","keydown"].forEach(ev=>
+    window.addEventListener(ev, primeTTS, {capture:true, passive:true, once:true}));
 }
 const SPK_SVG='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4V5z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19 5a9 9 0 0 1 0 14"/></svg>';
 
@@ -1315,6 +1373,7 @@ renderRef();
 startQuiz();
 buildFamList(); renderFamily();
 paintSpeakers();
+(function(){var c=document.getElementById("ttsNoteClose");if(c)c.onclick=function(){document.getElementById("ttsNote").hidden=true;};})();
 </script>
 </body>
 </html>
