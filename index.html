@@ -187,7 +187,8 @@
   .ref-search input{flex:1;min-width:200px;border:1px solid var(--line);background:var(--paper-card);border-radius:10px;
     padding:11px 14px;font-family:"Inter",sans-serif;font-size:.92rem;color:var(--ink)}
   .ref-search input:focus{outline:2px solid var(--celadon);outline-offset:1px}
-  .ref-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(124px,1fr));gap:10px}
+  .ref-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(108px,1fr));gap:10px}
+  @media(max-width:380px){.ref-grid{grid-template-columns:1fr 1fr;gap:8px}}
   .ref-cell{border:1px solid var(--line);background:var(--paper-card);border-radius:11px;padding:12px;
     display:flex;flex-direction:column;gap:2px;transition:.12s;position:relative}
   .ref-cell:hover{border-color:var(--celadon);transform:translateY(-2px)}
@@ -577,7 +578,7 @@ const DECKS={
     {c:"纟",alt:"糸",py:"mì",mean:"thread / silk",ex:"红",exPy:"hóng",exMean:"red",hook:"Colours and textiles."},
     {c:"目",py:"mù",mean:"eye",ex:"看",exPy:"kàn",exMean:"look",hook:"看 = a hand shading an eye."},
     {c:"宀",py:"mián",mean:"roof",ex:"家",exPy:"jiā",exMean:"home",hook:"The top of a house."},
-    {c:"食",alt:"饣",py:"shí",mean:"food / eat",ex:"饭",exPy:"fàn",exMean:"meal",hook:"Nourishment: meal, hungry."},
+    {c:"食",alt:"饣",py:"shí",mean:"food / eat",ex:"饭",exPy:"fàn",exMean:"meal",hook:"饣 marks food words (饭 meal, 饿 hungry). Note: the radical reads shí — the everyday verb “to eat” is a different character, 吃 chī (mouth radical)."},
     {c:"刀",alt:"刂",py:"dāo",mean:"knife",ex:"到",exPy:"dào",exMean:"arrive",hook:"Cutting and separating words."},
     {c:"山",py:"shān",mean:"mountain",ex:"岛",exPy:"dǎo",exMean:"island",hook:"Three peaks."},
     {c:"虫",py:"chóng",mean:"insect / bug",ex:"蛇",exPy:"shé",exMean:"snake",hook:"Crawling creatures."},
@@ -622,7 +623,7 @@ const DECKS={
   ]},
   actions:{name:"Actions & Objects",cards:[
     {c:"言",alt:"讠",py:"yán",mean:"speech",ex:"说",exPy:"shuō",exMean:"speak",hook:"Words and language."},
-    {c:"食",alt:"饣",py:"shí",mean:"food / eat",ex:"饭",exPy:"fàn",exMean:"meal",hook:"Nourishment."},
+    {c:"食",alt:"饣",py:"shí",mean:"food / eat",ex:"饭",exPy:"fàn",exMean:"meal",hook:"Radical reads shí; the verb “to eat” is 吃 chī (mouth radical)."},
     {c:"衣",alt:"衤",py:"yī",mean:"clothes",ex:"裤",exPy:"kù",exMean:"trousers",hook:"Wearing things."},
     {c:"门",alt:"門",py:"mén",mean:"door / gate",ex:"间",exPy:"jiān",exMean:"between",hook:"An entrance."},
     {c:"车",alt:"車",py:"chē",mean:"vehicle",ex:"轮",exPy:"lún",exMean:"wheel",hook:"Rolling wheels."},
@@ -1300,8 +1301,13 @@ const navObs=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)
   navLinks.forEach(a=>a.classList.toggle("active",a.getAttribute("href")==="#"+e.target.id));
 }),{rootMargin:"-45% 0px -50% 0px"});
 secs.forEach(s=>s&&navObs.observe(s));
-const revObs=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add("in");revObs.unobserve(e.target);}}),{threshold:.1});
-$$(".reveal").forEach(el=>revObs.observe(el));
+function revealAll(){$$(".reveal").forEach(el=>el.classList.add("in"));}
+if("IntersectionObserver" in window){
+  const revObs=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add("in");revObs.unobserve(e.target);}}),{threshold:0,rootMargin:"0px 0px -8% 0px"});
+  $$(".reveal").forEach(el=>revObs.observe(el));
+  /* failsafe: never leave a section hidden (e.g. very tall sections on small screens) */
+  setTimeout(revealAll,1400);
+}else{ revealAll(); }
 
 /* ===================== INIT ===================== */
 buildDeckPicker(); startSession("top30");
