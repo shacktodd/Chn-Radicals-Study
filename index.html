@@ -124,11 +124,13 @@
   .session-stat .sub{font-size:.8rem;color:var(--muted)}
   .session-stat .sub b{color:var(--seal);font-family:"JetBrains Mono",monospace}
 
-  .flip{perspective:1600px;cursor:pointer;outline:none;touch-action:pan-y;user-select:none}
+  .flip{perspective:1600px;cursor:pointer;outline:none;touch-action:pan-y;user-select:none;position:relative}
+  .flip.dragging{transition:none}
+  .flip:not(.dragging){transition:transform .2s ease}
   .flip-inner{position:relative;width:100%;aspect-ratio:1/1.12;
     transition:transform .5s cubic-bezier(.4,.05,.2,1);transform-style:preserve-3d}
   .flip.is-flipped .flip-inner{transform:rotateY(180deg)}
-  .flip.swiping .flip-inner{transition:none}
+  .flip.no-anim,.flip.no-anim .flip-inner{transition:none!important}
   .face{position:absolute;inset:0;backface-visibility:hidden;border-radius:18px;background:var(--paper-card);
     border:1px solid var(--line);box-shadow:var(--shadow);display:flex;flex-direction:column}
   .face.back{transform:rotateY(180deg)}
@@ -154,7 +156,7 @@
   .back-body .bex .exc{font-family:"Noto Serif SC",serif;font-size:1.5rem;font-weight:600}
   .back-body .bhook{color:var(--muted);font-size:.92rem;margin-top:12px;font-style:italic;font-family:"Newsreader",serif}
   .swipe-cue{position:absolute;top:50%;transform:translateY(-50%);font-family:"JetBrains Mono",monospace;
-    font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;opacity:0;transition:.1s;padding:6px 10px;border-radius:8px;z-index:3}
+    font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;opacity:0;transition:opacity .1s;padding:6px 10px;border-radius:8px;z-index:6;pointer-events:none}
   .swipe-cue.left{left:14px;color:var(--ochre);background:rgba(189,139,48,.14)}
   .swipe-cue.right{right:14px;color:var(--celadon-deep);background:rgba(92,138,124,.16)}
 
@@ -233,6 +235,13 @@
   .qfeedback{font-size:.92rem;font-weight:600;display:flex;align-items:center;gap:8px}
   .qfeedback.good{color:var(--celadon-deep)} .qfeedback.bad{color:var(--seal-deep)}
   .qfeedback .ans{font-family:"Inter";font-weight:500;color:var(--muted)}
+  .qreveal{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:14px;padding:12px 14px;
+    background:var(--paper);border:1px solid var(--line);border-radius:12px}
+  .qreveal .qr-c{font-family:"Noto Serif SC",serif;font-size:1.9rem;font-weight:700;line-height:1}
+  .qreveal .qr-p{font-family:"JetBrains Mono",monospace;font-weight:700;font-size:1.05rem}
+  .qreveal .qr-div{color:var(--line);font-weight:700}
+  .qreveal .qr-m{font-family:"Newsreader",serif;font-size:1.15rem;font-weight:600}
+  .qreveal .spk{width:30px;height:30px}.qreveal .spk svg{width:15px;height:15px}
   .qresult{text-align:center;padding:18px 0}
   .qresult .big-score{font-family:"Newsreader",serif;font-size:3.2rem;font-weight:600}
   .qresult .rmsg{color:var(--muted);margin:6px 0 22px}
@@ -400,10 +409,10 @@
       </div>
 
       <div class="flip" id="flip" tabindex="0" role="button" aria-label="Flashcard — space to flip, 1 still learning, 2 got it">
+        <span class="swipe-cue left" id="cueLeft">↤ learning</span>
+        <span class="swipe-cue right" id="cueRight">got it ↦</span>
         <div class="flip-inner">
           <div class="face front">
-            <span class="swipe-cue left" id="cueLeft">↤ learning</span>
-            <span class="swipe-cue right" id="cueRight">got it ↦</span>
             <div class="face-top"><span class="idx" id="fIdx">#1</span><span class="tag" id="fTag">radical</span></div>
             <button class="spk front-spk" id="frontSpk" aria-label="Hear pronunciation"></button>
             <div class="front-grid">
@@ -532,7 +541,7 @@
 </footer>
 
 <div id="ttsNote" class="tts-note" hidden role="status">
-  <span>No Chinese (zh-CN) voice is installed on this device, so audio may be silent or read incorrectly.<span class="tts-fix">Android: Settings → System → Languages &amp; input → Text-to-speech output → install a Chinese voice (Google’s engine offers one), then reload this page.</span></span>
+  <span>This device’s text-to-speech isn’t returning a usable voice, so audio is silent. Test it in Settings → System → Languages &amp; input → Text-to-speech output (tap “Play”). If that’s silent too, install <b>Google Speech Services</b> and a <b>Chinese (zh-CN)</b> voice there, set it as the preferred engine, then reload this page.<span class="tts-fix">Also check your <b>media</b> volume — text-to-speech uses the media channel, not the ringer.</span></span>
   <button id="ttsNoteClose" aria-label="Dismiss">&times;</button>
 </div>
 
@@ -555,20 +564,30 @@ function showTtsNotice(){
   if(noticeShown) return; noticeShown = true;
   const el=document.getElementById("ttsNote"); if(el) el.hidden=false;
 }
+/* Some radical COMPONENTS aren't read correctly in isolation by TTS engines.
+   Speak the standalone form that actually carries the intended reading. */
+const SAY_FIX={"纟":"糸","氵":"水","扌":"手","忄":"心","讠":"言","饣":"食","钅":"金","礻":"示","衤":"衣","艹":"草","灬":"火","犭":"犬"};
+function makeUtter(text,rate){
+  const u=new SpeechSynthesisUtterance(text);
+  u.lang="zh-CN"; if(zhVoice) u.voice=zhVoice; u.rate=rate; u.pitch=1; u.volume=1;
+  return u;
+}
 function doSpeak(text){
   try{
+    if(SAY_FIX[text]) text=SAY_FIX[text];
     /* Android Chrome sometimes leaves the queue paused/stuck */
     if(speechSynthesis.paused) speechSynthesis.resume();
     speechSynthesis.cancel();
-    const u=new SpeechSynthesisUtterance(text);
-    u.lang="zh-CN"; if(zhVoice) u.voice=zhVoice; u.rate=.82; u.pitch=1; u.volume=1;
-    speechSynthesis.speak(u);
+    /* say it twice: once slowly to hear the tone, once at natural speed */
+    speechSynthesis.speak(makeUtter(text,0.55));
+    speechSynthesis.speak(makeUtter(text,0.95));
     /* nudge against Chrome's auto-pause */
     setTimeout(()=>{ try{ if(speechSynthesis.paused) speechSynthesis.resume(); }catch(e){} },120);
   }catch(e){}
 }
 function speak(text){
-  if(!SUPPORTS_TTS || !text) return;
+  if(!text) return;
+  if(!SUPPORTS_TTS){ showTtsNotice(); return; }
   if(!voicesLoaded) scanVoices();
   if(!voicesLoaded){
     /* voices often arrive a beat late on mobile — queue once and retry */
@@ -577,9 +596,9 @@ function speak(text){
       scanVoices();
       const t = pendingText; pendingText = null;
       if(!t) return;
-      if(voicesLoaded && !zhVoice) showTtsNotice();
+      if(!voicesLoaded || !zhVoice) showTtsNotice(); /* empty list or no zh voice */
       doSpeak(t); /* best effort even if the list is still empty */
-    }, 400);
+    }, 500);
     return;
   }
   if(!zhVoice) showTtsNotice();
@@ -1071,7 +1090,12 @@ function updateRing(){
 function renderCard(){
   if(!queue.length){return showSummary();}
   const card=DECKS[curDeck].cards[queue[0]];
-  const f=$("#flip"); f.classList.remove("is-flipped");
+  const f=$("#flip");
+  /* reset to the front instantly — no flip-back animation that would flash the answer */
+  f.classList.add("no-anim");
+  f.classList.remove("is-flipped");
+  f.style.transform="";
+  f.style.opacity="";
   $("#fChar").textContent=card.c;
   $("#fTag").textContent=card.alt?("also "+card.alt):"radical";
   $("#fIdx").textContent=mastered.size+1+"/"+totalCards;
@@ -1084,6 +1108,9 @@ function renderCard(){
   paintSpeakers();
   updateRing();
   $("#flipHint").textContent="Tap the card to reveal the answer first.";
+  /* re-enable the flip animation on the next frame */
+  void f.offsetWidth;
+  requestAnimationFrame(()=>requestAnimationFrame(()=>f.classList.remove("no-anim")));
 }
 function flipCard(){
   const f=$("#flip"); f.classList.toggle("is-flipped");
@@ -1131,31 +1158,49 @@ function showSummary(){
     };
   }
 }
-/* card interactions: tap to flip, swipe to rate, keyboard */
+/* card interactions: tap to flip, swipe left/right to rate, keyboard */
 (function(){
-  const f=$("#flip"); let sx=0,sy=0,drag=false,moved=false;
-  f.addEventListener("pointerdown",e=>{sx=e.clientX;sy=e.clientY;drag=true;moved=false;f.classList.add("swiping");});
+  const f=$("#flip"); let sx=0,sy=0,drag=false,moved=false,horiz=false;
+  function resetCues(){$("#cueLeft").style.opacity=0;$("#cueRight").style.opacity=0;}
+  f.addEventListener("pointerdown",e=>{
+    if(e.pointerType==="mouse"&&e.button!==0)return;
+    sx=e.clientX;sy=e.clientY;drag=true;moved=false;horiz=false;
+    f.classList.add("dragging");
+    try{f.setPointerCapture(e.pointerId);}catch(_){}
+  });
   f.addEventListener("pointermove",e=>{
-    if(!drag)return; const dx=e.clientX-sx, dy=e.clientY-sy;
-    if(Math.abs(dx)>8||Math.abs(dy)>8)moved=true;
-    if(f.classList.contains("is-flipped")&&Math.abs(dx)>Math.abs(dy)){
-      f.querySelector(".flip-inner").style.transform="rotateY(180deg) translateX("+(-dx*0.4)+"px)";
-      $("#cueRight").style.opacity=dx>40?1:0; $("#cueLeft").style.opacity=dx<-40?1:0;
+    if(!drag)return;
+    const dx=e.clientX-sx, dy=e.clientY-sy;
+    if(!moved&&(Math.abs(dx)>6||Math.abs(dy)>6)){moved=true;horiz=Math.abs(dx)>Math.abs(dy);}
+    if(horiz){
+      f.style.transform="translateX("+dx+"px) rotate("+(dx*0.025)+"deg)";
+      $("#cueRight").style.opacity=dx>55?1:0;
+      $("#cueLeft").style.opacity=dx<-55?1:0;
     }
   });
-  f.addEventListener("pointerup",e=>{
-    if(!drag)return; drag=false; f.classList.remove("swiping");
-    f.querySelector(".flip-inner").style.transform="";
+  function finish(e){
+    if(!drag)return; drag=false;
+    f.classList.remove("dragging");
+    try{f.releasePointerCapture(e.pointerId);}catch(_){}
     const dx=e.clientX-sx, dy=e.clientY-sy;
-    if(!moved){flipCard();return;}
-    if(f.classList.contains("is-flipped")&&Math.abs(dx)>60&&Math.abs(dx)>Math.abs(dy)){ rate(dx>0); }
-    else { $("#cueRight").style.opacity=0;$("#cueLeft").style.opacity=0; }
-  });
-  f.addEventListener("pointercancel",()=>{drag=false;f.classList.remove("swiping");f.querySelector(".flip-inner").style.transform="";});
+    resetCues();
+    if(!moved){ f.style.transform=""; flipCard(); return; }
+    if(horiz && Math.abs(dx)>60){
+      /* fling the card off, then advance */
+      const dir=dx>0?1:-1;
+      f.style.transform="translateX("+(dir*window.innerWidth*0.6)+"px) rotate("+(dir*8)+"deg)";
+      f.style.opacity="0";
+      setTimeout(()=>{ f.style.opacity=""; rate(dir>0); }, 170);
+    } else {
+      f.style.transform=""; /* snap back */
+    }
+  }
+  f.addEventListener("pointerup",finish);
+  f.addEventListener("pointercancel",e=>{drag=false;f.classList.remove("dragging");f.style.transform="";resetCues();});
   f.addEventListener("keydown",e=>{
     if(e.code==="Space"||e.code==="Enter"){e.preventDefault();flipCard();}
-    else if(e.key==="1"){if(f.classList.contains("is-flipped"))rate(false);}
-    else if(e.key==="2"){if(f.classList.contains("is-flipped"))rate(true);}
+    else if(e.key==="1"){rate(false);}
+    else if(e.key==="2"){rate(true);}
   });
 })();
 $("#againBtn").onclick=()=>{ if($("#flip").classList.contains("is-flipped"))rate(false); else flipCard(); };
@@ -1276,9 +1321,18 @@ function answer(btn,opt,q){
     speak(q.item.c);
   }else{
     qStreak=0; qResults[qIdx]="bad"; btn.classList.add("wrong");
-    fb.className="qfeedback bad";
-    fb.innerHTML='✗ <span class="ans">'+q.item.c+' · '+q.item.py+' · '+q.item.mean+'</span>';
+    fb.className="qfeedback bad"; fb.innerHTML="✗ Not quite";
   }
+  /* always reveal the full breakdown: radical · pinyin · English */
+  const rev=document.createElement("div");
+  rev.className="qreveal";
+  rev.innerHTML='<button class="spk" data-say="'+q.item.c+'" aria-label="Hear"></button>'+
+    '<span class="qr-c hanzi">'+q.item.c+'</span>'+
+    '<span class="qr-p">'+pinyinHTML(q.item.py)+'</span>'+
+    '<span class="qr-div">·</span>'+
+    '<span class="qr-m">'+q.item.mean+'</span>';
+  $("#opts").insertAdjacentElement("afterend",rev);
+  paintSpeakers(rev);
   $("#qScore").textContent=qScore; $("#qStreak").textContent=qStreak;
   renderDots();
   const nb=document.createElement("button");
