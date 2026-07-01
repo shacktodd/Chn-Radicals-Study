@@ -340,6 +340,34 @@
   .xray-char .xc-rad b{font-family:"Noto Serif SC",serif;font-size:.95rem;font-weight:700}
   .xray-hint{text-align:center;font-size:.8rem;color:var(--muted);margin-top:16px}
 
+  /* STORY READER */
+  #stories{}
+  .story-bar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:20px}
+  .story-bar .btn{padding:10px 18px}
+  .btn.soft{color:var(--ink);border:1px solid var(--line);background:var(--paper-card)}
+  .btn.soft:hover{border-color:var(--celadon);background:var(--paper)}
+  .story-title{font-family:"Newsreader",serif;font-size:1.15rem;font-weight:600}
+  .story-title .hanzi{font-weight:600}
+  .story-title .en{color:var(--muted);font-size:.92rem;font-style:italic;margin-left:8px}
+  .story-body{background:var(--paper-card);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);padding:26px 22px}
+  .story-para{display:flex;flex-wrap:wrap;align-items:flex-end;row-gap:16px;margin:0 0 20px}
+  .story-para:last-child{margin-bottom:0}
+  .word{display:inline-flex;cursor:pointer;border-radius:8px;transition:background .12s}
+  .word:hover{background:rgba(92,138,124,.14)}
+  .word.shaded{background:rgba(187,57,44,.18)}
+  .cha{display:inline-flex;flex-direction:column;align-items:center;padding:3px 2px 2px}
+  .cha .hz{font-family:"Noto Serif SC",serif;font-size:1.8rem;font-weight:500;line-height:1.15}
+  .cha .py{font-family:"JetBrains Mono",monospace;font-size:.72rem;margin-top:3px;white-space:nowrap}
+  .cha.punct{cursor:default}
+  .cha.punct .py{visibility:hidden}
+  .gloss-bar{margin-top:18px;background:var(--ink);color:var(--paper);border-radius:14px;padding:14px 18px;
+    display:flex;align-items:center;gap:14px;box-shadow:var(--shadow)}
+  .gloss-bar .g-hz{font-family:"Noto Serif SC",serif;font-size:2rem;font-weight:600;line-height:1}
+  .gloss-bar .g-info{flex:1;min-width:0}
+  .gloss-bar .g-py{font-family:"JetBrains Mono",monospace;font-weight:700;font-size:1rem;color:var(--ochre)}
+  .gloss-bar .g-m{font-family:"Newsreader",serif;font-size:1.15rem;color:#e9dfca}
+  .story-tip{text-align:center;font-size:.8rem;color:var(--muted);margin-top:14px}
+
   /* FOOTER */
   footer{background:var(--ink);color:#c2b79f;padding:50px 0 40px}
   footer .wrap{display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:30px}
@@ -375,6 +403,7 @@
       <a href="#quiz">Recall Quiz</a>
       <a href="#lab">Sound Families</a>
       <a href="#xray">字 X-Ray</a>
+      <a href="#stories">Stories</a>
       <a href="#reference">All 214</a>
     </nav>
   </div>
@@ -552,6 +581,25 @@
   </div>
 </section>
 
+<!-- STORY READER -->
+<section class="block reveal" id="stories">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">Tool 05 · Story reader</span>
+      <h2>Read a short HSK 1 story, character by character.</h2>
+      <p>Tap “New story” for a fresh three-paragraph tale built from beginner vocabulary. Pinyin sits under every character; tap any word to shade it, hear it, and see its meaning; and play the whole story aloud.</p>
+    </div>
+    <div class="story-bar">
+      <button class="btn primary" id="newStoryBtn">↻ New story</button>
+      <button class="btn soft" id="playStoryBtn">▷ Play audio</button>
+      <span class="story-title" id="storyTitle"></span>
+    </div>
+    <div class="story-body" id="storyBody"></div>
+    <div class="gloss-bar" id="glossBar" hidden></div>
+    <div class="story-tip">Tap a word for its pinyin, meaning, and audio. Tap “New story” any time for another.</div>
+  </div>
+</section>
+
 <!-- REFERENCE -->
 <section class="block reveal" id="reference">
   <div class="wrap">
@@ -578,6 +626,7 @@
       <a href="#quiz">Recall quiz</a>
       <a href="#lab">Sound families</a>
       <a href="#xray">字 X-Ray</a>
+      <a href="#stories">Story reader</a>
       <a href="#reference">All 214 radicals</a>
     </div>
     <div>
@@ -1535,7 +1584,7 @@ $("#famSearch").addEventListener("input",e=>buildFamList(e.target.value));
 /* ===================== HERO + NAV + REVEAL ===================== */
 $$("#heroRow .g, #heroGrid").forEach(el=>el.addEventListener("click",()=>speak(el.dataset.say)));
 const navLinks=$$("#navlinks a");
-const secs=["flashcards","quiz","lab","xray","reference"].map(id=>$("#"+id));
+const secs=["flashcards","quiz","lab","xray","stories","reference"].map(id=>$("#"+id));
 const navObs=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)
   navLinks.forEach(a=>a.classList.toggle("active",a.getAttribute("href")==="#"+e.target.id));
 }),{rootMargin:"-45% 0px -50% 0px"});
@@ -1613,12 +1662,399 @@ function renderXray(){
   paintSpeakers($("#xraySentence"));
 }
 
+/* ===================== HSK 1 STORY READER ===================== */
+/* Each token line: "word|pinyin (space-separated syllables)|English". A line with no "|" is punctuation. */
+const STORY_SRC=[
+ {t:"我的小猫",en:"My Little Cat",body:[
+`我|wǒ|I / me
+家|jiā|home / family
+有|yǒu|to have
+一只|yì zhī|one (+ measure word)
+小|xiǎo|small
+猫|māo|cat
+。
+它|tā|it
+的|de|(possessive)
+名字|míng zi|name
+叫|jiào|to be called
+咪咪|mī mī|Mimi (a name)
+。`,
+`咪咪|mī mī|Mimi
+很|hěn|very
+小|xiǎo|small
+，
+也|yě|also
+很|hěn|very
+漂亮|piào liang|pretty
+。
+它|tā|it
+喜欢|xǐ huan|to like
+喝|hē|to drink
+水|shuǐ|water
+，
+也|yě|also
+喜欢|xǐ huan|to like
+吃|chī|to eat
+鱼|yú|fish
+。`,
+`今天|jīn tiān|today
+它|tā|it
+吃|chī|to eat
+了|le|(completed action)
+很|hěn|very
+多|duō|many / much
+鱼|yú|fish
+。
+现在|xiàn zài|now
+咪咪|mī mī|Mimi
+在|zài|at / on
+椅子|yǐ zi|chair
+上|shàng|on / above
+睡觉|shuì jiào|to sleep
+。
+我|wǒ|I
+很|hěn|very
+爱|ài|to love
+它|tā|it
+。`]},
+ {t:"我的一天",en:"My Day",body:[
+`今天|jīn tiān|today
+是|shì|to be
+星期六|xīng qī liù|Saturday
+。
+早上|zǎo shang|morning
+我|wǒ|I
+七|qī|seven
+点|diǎn|o'clock
+起床|qǐ chuáng|to get up
+。
+我|wǒ|I
+喝|hē|to drink
+茶|chá|tea
+，
+吃|chī|to eat
+米饭|mǐ fàn|rice
+。`,
+`上午|shàng wǔ|morning
+我|wǒ|I
+和|hé|and / with
+朋友|péng you|friend
+去|qù|to go
+商店|shāng diàn|shop
+。
+我|wǒ|I
+买|mǎi|to buy
+了|le|(completed action)
+一些|yì xiē|some
+苹果|píng guǒ|apple
+。
+苹果|píng guǒ|apple
+很|hěn|very
+好吃|hǎo chī|delicious
+。`,
+`下午|xià wǔ|afternoon
+天气|tiān qì|weather
+很|hěn|very
+好|hǎo|good
+。
+我|wǒ|I
+在|zài|at
+家|jiā|home
+看|kàn|to read / watch
+书|shū|book
+。
+晚上|wǎn shang|evening
+我|wǒ|I
+很|hěn|very
+高兴|gāo xìng|happy
+。`]},
+ {t:"我的中文老师",en:"My Chinese Teacher",body:[
+`我|wǒ|I
+是|shì|to be
+学生|xué sheng|student
+。
+我|wǒ|I
+在|zài|at
+学校|xué xiào|school
+学习|xué xí|to study
+中文|zhōng wén|Chinese
+。
+我|wǒ|I
+的|de|(possessive)
+老师|lǎo shī|teacher
+是|shì|to be
+中国|zhōng guó|China / Chinese
+人|rén|person
+。`,
+`老师|lǎo shī|teacher
+的|de|(possessive)
+名字|míng zi|name
+叫|jiào|to be called
+王|wáng|Wang (surname)
+老师|lǎo shī|teacher
+。
+她|tā|she
+很|hěn|very
+漂亮|piào liang|pretty
+，
+也|yě|also
+很|hěn|very
+好|hǎo|good / kind
+。`,
+`今天|jīn tiān|today
+她|tā|she
+教|jiāo|to teach
+我们|wǒ men|we / us
+写|xiě|to write
+字|zì|character
+。
+我|wǒ|I
+喜欢|xǐ huan|to like
+中文|zhōng wén|Chinese
+课|kè|class / lesson
+。
+中文|zhōng wén|Chinese
+很|hěn|very
+有意思|yǒu yì si|interesting
+。`]},
+ {t:"我的家",en:"My Family",body:[
+`我|wǒ|I
+的|de|(possessive)
+家|jiā|family
+有|yǒu|to have
+四|sì|four
+口|kǒu|(measure word for family)
+人|rén|people
+。
+爸爸|bà ba|dad
+，
+妈妈|mā ma|mom
+，
+我|wǒ|I
+和|hé|and
+弟弟|dì di|younger brother
+。`,
+`爸爸|bà ba|dad
+是|shì|to be
+医生|yī shēng|doctor
+。
+妈妈|mā ma|mom
+是|shì|to be
+老师|lǎo shī|teacher
+。
+弟弟|dì di|younger brother
+很|hěn|very
+小|xiǎo|small / young
+，
+今年|jīn nián|this year
+五|wǔ|five
+岁|suì|years old
+。`,
+`晚上|wǎn shang|evening
+我们|wǒ men|we
+都|dōu|all
+在|zài|at
+家|jiā|home
+。
+我们|wǒ men|we
+一起|yì qǐ|together
+吃饭|chī fàn|to eat (a meal)
+，
+一起|yì qǐ|together
+说话|shuō huà|to talk
+。
+我|wǒ|I
+爱|ài|to love
+我|wǒ|I
+的|de|(possessive)
+家|jiā|family
+。`]},
+ {t:"下雨天",en:"A Rainy Day",body:[
+`昨天|zuó tiān|yesterday
+天气|tiān qì|weather
+不|bù|not
+好|hǎo|good
+。
+上午|shàng wǔ|morning
+下雨|xià yǔ|to rain
+了|le|(completed action)
+。
+天气|tiān qì|weather
+很|hěn|very
+冷|lěng|cold
+。`,
+`我|wǒ|I
+不|bù|not
+想|xiǎng|to want
+去|qù|to go
+学校|xué xiào|school
+。
+但是|dàn shì|but
+我|wǒ|I
+是|shì|to be
+学生|xué sheng|student
+，
+我|wǒ|I
+要|yào|to have to
+去|qù|to go
+上课|shàng kè|to attend class
+。`,
+`中午|zhōng wǔ|noon
+雨|yǔ|rain
+小|xiǎo|small / light
+了|le|(change of state)
+。
+下午|xià wǔ|afternoon
+太阳|tài yáng|sun
+出来|chū lái|to come out
+了|le|(change of state)
+。
+现在|xiàn zài|now
+天气|tiān qì|weather
+很|hěn|very
+好|hǎo|good
+，
+我|wǒ|I
+很|hěn|very
+高兴|gāo xìng|happy
+。`]},
+ {t:"买东西",en:"Shopping",body:[
+`今天|jīn tiān|today
+下午|xià wǔ|afternoon
+我|wǒ|I
+和|hé|and
+妈妈|mā ma|mom
+去|qù|to go
+商店|shāng diàn|shop
+。
+商店|shāng diàn|shop
+里|lǐ|inside
+有|yǒu|to have
+很|hěn|very
+多|duō|many
+东西|dōng xi|things
+。`,
+`妈妈|mā ma|mom
+想|xiǎng|to want
+买|mǎi|to buy
+一些|yì xiē|some
+水果|shuǐ guǒ|fruit
+。
+我|wǒ|I
+喜欢|xǐ huan|to like
+苹果|píng guǒ|apple
+。
+一个|yí ge|one (+ measure word)
+苹果|píng guǒ|apple
+五|wǔ|five
+块|kuài|(unit of money)
+钱|qián|money
+。`,
+`妈妈|mā ma|mom
+买|mǎi|to buy
+了|le|(completed action)
+五|wǔ|five
+个|gè|(measure word)
+苹果|píng guǒ|apple
+。
+我们|wǒ men|we
+回家|huí jiā|to go home
+了|le|(completed action)
+。
+晚上|wǎn shang|evening
+我|wǒ|I
+吃|chī|to eat
+了|le|(completed action)
+一个|yí ge|one
+苹果|píng guǒ|apple
+，
+很|hěn|very
+甜|tián|sweet
+。`]}
+];
+function parseStory(s){
+  return {title:s.t, en:s.en, paras:s.body.map(par=>
+    par.trim().split("\n").map(line=>{
+      line=line.trim();
+      if(line.indexOf("|")<0) return {p:line};
+      const parts=line.split("|");
+      return {w:parts[0], py:parts[1].split(" "), m:parts[2]};
+    })
+  )};
+}
+const STORIES=STORY_SRC.map(parseStory);
+let storyOrder=[], curStory=null, storyPlaying=false;
+
+function setPlayLabel(on){ $("#playStoryBtn").innerHTML = on ? "■ Stop" : "▷ Play audio"; }
+function nextStory(){
+  if(!storyOrder.length) storyOrder=shuffle(STORIES.map((_,i)=>i));
+  const idx=storyOrder.pop();
+  curStory=STORIES[idx];
+  renderStory();
+}
+function renderStory(){
+  if(SUPPORTS_TTS && speechSynthesis.speaking) speechSynthesis.cancel();
+  storyPlaying=false; setPlayLabel(false);
+  $("#storyTitle").innerHTML='<span class="hanzi">'+curStory.title+'</span><span class="en">'+curStory.en+'</span>';
+  const body=$("#storyBody"); body.innerHTML="";
+  curStory.paras.forEach(par=>{
+    const p=document.createElement("div"); p.className="story-para";
+    par.forEach(tok=>{
+      if(tok.p!==undefined){
+        const c=document.createElement("span"); c.className="cha punct";
+        c.innerHTML='<span class="hz hanzi">'+tok.p+'</span><span class="py">.</span>';
+        p.appendChild(c); return;
+      }
+      const wsp=document.createElement("span"); wsp.className="word";
+      [...tok.w].forEach((ch,i)=>{
+        const py=tok.py[i]||"";
+        const c=document.createElement("span"); c.className="cha";
+        c.innerHTML='<span class="hz hanzi">'+ch+'</span><span class="py t'+toneOf(py)+'">'+py+'</span>';
+        wsp.appendChild(c);
+      });
+      wsp.addEventListener("click",()=>{
+        $$("#storyBody .word.shaded").forEach(x=>x.classList.remove("shaded"));
+        wsp.classList.add("shaded");
+        showGloss(tok);
+        speak(tok.w);
+      });
+      p.appendChild(wsp);
+    });
+    body.appendChild(p);
+  });
+  $("#glossBar").hidden=true;
+}
+function showGloss(tok){
+  const g=$("#glossBar"); g.hidden=false;
+  g.innerHTML='<span class="g-hz hanzi">'+tok.w+'</span>'+
+    '<span class="g-info"><span class="g-py">'+tok.py.join(" ")+'</span> · <span class="g-m">'+tok.m+'</span></span>'+
+    '<button class="spk lg on-dark" data-say="'+tok.w+'" aria-label="Hear word"></button>';
+  paintSpeakers(g);
+}
+function playStory(){
+  if(!SUPPORTS_TTS){ showTtsNotice(); return; }
+  if(speechSynthesis.speaking || storyPlaying){ speechSynthesis.cancel(); storyPlaying=false; setPlayLabel(false); return; }
+  const text=curStory.paras.map(par=>par.map(t=>t.w||t.p||"").join("")).join(" ");
+  storyPlaying=true; setPlayLabel(true);
+  try{
+    if(speechSynthesis.paused) speechSynthesis.resume();
+    speechSynthesis.cancel();
+    const u=makeUtter(text,0.85);
+    u.onend=()=>{ storyPlaying=false; setPlayLabel(false); };
+    speechSynthesis.speak(u);
+    setTimeout(()=>{ try{ if(speechSynthesis.paused) speechSynthesis.resume(); }catch(e){} },120);
+  }catch(e){ storyPlaying=false; setPlayLabel(false); }
+}
+$("#newStoryBtn").onclick=nextStory;
+$("#playStoryBtn").onclick=playStory;
+
 /* ===================== INIT ===================== */
 buildDeckPicker(); startSession("top30");
 renderRef();
 startQuiz();
 buildFamList(); renderFamily();
 buildXrayPicker(); renderXray();
+nextStory();
 paintSpeakers();
 (function(){var c=document.getElementById("ttsNoteClose");if(c)c.onclick=function(){document.getElementById("ttsNote").hidden=true;};})();
 </script>
